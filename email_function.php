@@ -78,9 +78,9 @@ function usermail_as_me($sender_mail, $reciever_mail)
 {
     global $email, $result;
     if ($sender_mail == $email) {
-        echo "me, " . $result['username'];
+        echo "me, " . $result['name'];
     } elseif ($reciever_mail == $email) {
-        echo $result['username'] . ", me";
+        echo $result['name'] . ", me";
     }
 }
 
@@ -94,7 +94,7 @@ function mail_list_display($sender_mail, $reciever_mail, $token, $m_no, $subject
             <input type="checkbox" class="star" name="star-check[]" value="<?= $result['mail_no'] ?>">
         </td>
         <td style="width:30%;">
-            <a href="email.php?page=Email&token=<?= $token ?>&mailno=<?= $m_no ?>">
+            <a href="email.php?page=Email&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>">
                 <?= $bold . usermail_as_me($sender_mail, $reciever_mail) . $b_end ?>
             </a>
         </td>

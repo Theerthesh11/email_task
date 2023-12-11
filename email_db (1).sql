@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 11, 2023 at 02:12 AM
+-- Generation Time: Dec 11, 2023 at 01:46 PM
 -- Server version: 10.4.28-MariaDB
--- PHP Version: 8.2.4
+-- PHP Version: 8.0.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admin_details` (
   `id` int(11) NOT NULL,
-  `token_id` binary(1) NOT NULL,
+  `token_id` binary(16) NOT NULL,
   `emp_id` varchar(10) NOT NULL,
   `email` varchar(70) NOT NULL,
   `role` varchar(20) NOT NULL,
@@ -46,6 +46,13 @@ CREATE TABLE `admin_details` (
   `updated_on` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `admin_details`
+--
+
+INSERT INTO `admin_details` (`id`, `token_id`, `emp_id`, `email`, `role`, `name`, `date_of_birth`, `username`, `password`, `phone_no`, `profile_status`, `profile_path`, `created_by`, `created_on`, `updated_by`, `updated_on`) VALUES
+(1, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a5d, 'EST062', 'trexu@gmail.com', 'superadmin', 'Trexu', '2023-12-11', 'TrexuA01', '1234', 9898980078, 1, NULL, 'trexu', '2023-12-11', 'trexu', '2023-12-11');
+
 -- --------------------------------------------------------
 
 --
@@ -54,10 +61,10 @@ CREATE TABLE `admin_details` (
 
 CREATE TABLE `mail_list` (
   `id` int(11) NOT NULL,
-  `token_id` binary(1) NOT NULL,
+  `token_id` binary(16) NOT NULL,
   `mail_no` varchar(30) NOT NULL,
   `sender_email` varchar(40) NOT NULL,
-  `username` varchar(30) NOT NULL,
+  `name` varchar(30) NOT NULL,
   `reciever_email` varchar(40) NOT NULL,
   `cc` varchar(40) DEFAULT NULL,
   `bcc` varchar(40) DEFAULT NULL,
@@ -80,8 +87,24 @@ CREATE TABLE `mail_list` (
 -- Dumping data for table `mail_list`
 --
 
-INSERT INTO `mail_list` (`id`, `token_id`, `mail_no`, `sender_email`, `username`, `reciever_email`, `cc`, `bcc`, `subject`, `notes`, `attachment`, `date_of_sending`, `mail_status`, `inbox_status`, `starred`, `archived`, `label`, `spam`, `updated_by`, `created_by`, `updated_on`) VALUES
-(1, 0x0e, 'TH021', 'theertheshest@gmail.com', 'theerthesh234', 'theertheshwaranthangaraj@gmail.com', '', '', 'first mail', 'hiii', NULL, '2023-12-10', 'sent', 'read', 'no', 'no', NULL, 'no', 'theerthesh234', 'theerthesh234', '2023-12-10');
+INSERT INTO `mail_list` (`id`, `token_id`, `mail_no`, `sender_email`, `name`, `reciever_email`, `cc`, `bcc`, `subject`, `notes`, `attachment`, `date_of_sending`, `mail_status`, `inbox_status`, `starred`, `archived`, `label`, `spam`, `updated_by`, `created_by`, `updated_on`) VALUES
+(1, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH021', 'theertheshest@gmail.com', 'Theerthesh', 'theertheshwaranthangaraj@gmail.com', '', '', 'first mail', 'hiii', NULL, '2023-12-10', 'sent', 'read', 'no', 'no', NULL, 'no', 'theerthesh234', 'theerthesh234', '2023-12-10'),
+(2, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH001', 'theertheshest@gmail.com', 'Theerthesh', 'theertheshwaranthangaraj@gmail.com', ' ', ' ', 'hi', 'this is first mail', 0x20, '2023-11-14', 'sent', 'read', 'no', 'no', NULL, '', 'theerthesh', 'theerthesh', '2023-11-14'),
+(3, 0x0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, 'TH002', 'trexcity@gmail.com', 'Trexu', 'theertheshest@gmail.com', NULL, NULL, 'Subject 1', 'This is the first mail sent', NULL, '2023-11-15', 'trash', 'read', 'no', 'no', NULL, '', 'user1', 'user1', '2023-11-15'),
+(4, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH003', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 2', 'This is the second mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user2', 'user2', '2023-11-15'),
+(5, 0x0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, 'TH004', 'trexcity@gmail.com', 'Trexu', 'theertheshest@gmail.com', NULL, NULL, 'Subject 3', 'This is the third mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user3', 'user3', '2023-11-15'),
+(6, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH005', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 4', 'This is the fourth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user4', 'user4', '2023-11-15'),
+(7, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH007', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 6', 'This is the sixth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user6', 'user6', '2023-11-15'),
+(8, 0x0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, 'TH008', 'trexcity@gmail.com', 'Trexu', 'theertheshest@gmail.com', NULL, NULL, 'Subject 7', 'This is the seventh mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user7', 'user7', '2023-11-15'),
+(9, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH009', 'theertheshest@gmail.com', 'Theerthesh', 'receiver8@example.com', NULL, NULL, 'Subject 8', 'This is the eighth mail sent', NULL, '2023-11-15', 'sent', 'unread', 'no', 'no', NULL, '', 'user8', 'user8', '2023-11-15'),
+(10, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH011', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 10', 'This is the tenth mail sent', NULL, '2023-11-15', 'draft', 'read', 'no', 'no', NULL, '', 'user10', 'user10', '2023-11-15'),
+(11, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH013', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 12', 'This is the twelfth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', 'sample2', '', 'user12', 'user12', '2023-11-15'),
+(12, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH014', 'theertheshest@gmail.com', 'Theerthesh', 'receiver13@example.com', NULL, NULL, 'Subject 13', 'This is the thirteenth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user13', 'user13', '2023-11-15'),
+(13, 0x0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, 'TH015', 'trexcity@gmail.com', 'Trexu', 'theertheshest@gmail.com', NULL, NULL, 'Subject 14', 'This is the fourteenth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user14', 'user14', '2023-11-15'),
+(14, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH016', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 15', 'This is the fifteenth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user15', 'user15', '2023-11-15'),
+(15, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH017', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 16', 'This is the sixteenth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user16', 'user16', '2023-11-15'),
+(16, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH019', 'theertheshest@gmail.com', 'Theerthesh', 'trexcity@gmail.com', NULL, NULL, 'Subject 18', 'This is the eighteenth mail sent', NULL, '2023-11-15', 'sent', 'read', 'no', 'no', NULL, '', 'user18', 'user18', '2023-11-15'),
+(17, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'TH031', 'theertheshest@gmail.com', 'theerthesh', 'smaha24cse@gmail.com', '', '', 'third mail', 'khhkjhkjhkj', NULL, '2023-12-11', 'sent', 'read', 'no', 'no', NULL, 'no', 'theerthesh234', 'theerthesh234', '2023-12-11');
 
 -- --------------------------------------------------------
 
@@ -113,15 +136,15 @@ CREATE TABLE `user_details` (
 --
 
 INSERT INTO `user_details` (`id`, `token_id`, `email`, `name`, `date_of_birth`, `username`, `password`, `profile_status`, `profile_path`, `date_of_uploading`, `phone_no`, `last_login`, `created_by`, `created_on`, `updated_by`, `updated_on`) VALUES
-(32, 0x0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, 'sender9@example.com', 'Sender Nine', '1998-06-28', 'user9', 'password9', 1, NULL, NULL, 6667778888, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
+(32, 0x0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d, 'trexcity@gmail.com', 'Sender Nine', '1998-06-28', 'user9', 'password9', 1, NULL, NULL, 6667778888, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (40, 0x0c4d5e6f7a8d9b1c2e3f4a5d6e7f8a9d, 'sender8@example.com', 'Sender Eight', '1989-12-05', 'user8', 'password8', 1, NULL, NULL, 2223334444, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (43, 0x0d9c8e7f5b2a4d1e3f6c7b8a2d5e4f8c, 'sender5@example.com', 'Sender Five', '1987-07-25', 'user5', 'password5', 1, NULL, NULL, 4445556666, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
-(52, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'theertheshest@gmail.com', 'theerthesh', '2023-11-18', 'theerthesh234', 'def', 1, NULL, NULL, 9514309298, '2023-12-10', 'theerthesh', '2023-11-08', 'theerthesh', '2023-12-10'),
+(52, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a4d, 'theertheshest@gmail.com', 'theerthesh', '2023-11-18', 'theerthesh234', 'def', 0, NULL, NULL, 9514309298, '2023-12-10', 'theerthesh', '2023-11-08', 'theerthesh', '2023-12-11'),
 (45, 0x0e8f1a2b3c4d5e6f7a8d9b1c2e3f4a5d, 'sender7@example.com', 'Sender Seven', '1984-09-18', 'user7', 'password7', 1, NULL, NULL, 7779993333, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (48, 0x0f5b9a4c7d3e8f2b6c9a5d4e8c7b2a4d, 'sender4@example.com', 'Sender Four', '1992-11-10', 'user4', 'password4', 1, NULL, NULL, 9998887777, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (33, 0xa2b3c4d5e6f7a8b9c0d1e2f3a4b5c600, 'sender19@example.com', 'Sender Nineteen', '1999-07-29', 'user19', 'password19', 1, NULL, NULL, 3334445555, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (34, 0xa4b5c6d7e8f9a0b1c2d3e4f5a6b7c800, 'sender13@example.com', 'Sender Thirteen', '1983-07-14', 'user13', 'password13', 1, NULL, NULL, 9998887777, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
-(35, 0xa9b2e74c2d8a45f69e6e7b1f89a32342, 'sender2@example.com', 'theerthesh', '1985-02-15', 'user2', 'password2', 0, NULL, NULL, 9889097890, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
+(35, 0xa9b2e74c2d8a45f69e6e7b1f89a32342, 'sender2@example.com', 'theerthesh', '1985-02-15', 'user2', 'password2', 1, NULL, NULL, 9889097890, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (36, 0xb1a2d3e4f5c6b7a8d9e0f1a2b3c4d5e6, 'sender6@example.com', 'Sender Six', '1995-04-03', 'user6', 'password6', 1, NULL, NULL, 1110002222, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (37, 0xb5c6d7e8f9a1b2c3d4e5f6a7b8c9d000, 'sender11@example.com', 'Sender Eleven', '1986-08-22', 'user11', 'password11', 1, NULL, NULL, 8889990000, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
 (38, 0xb8c9d0e1f2a3b4c5d6e7f8a9b0c1d200, 'sender16@example.com', 'Sender Sixteen', '1980-10-20', 'user16', 'password16', 1, NULL, NULL, 7779993333, NULL, 'admin', '2023-11-15', 'admin', '2023-11-15'),
@@ -169,13 +192,13 @@ ALTER TABLE `user_details`
 -- AUTO_INCREMENT for table `admin_details`
 --
 ALTER TABLE `admin_details`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `mail_list`
 --
 ALTER TABLE `mail_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `user_details`
