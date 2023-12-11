@@ -59,7 +59,7 @@ function row_color($i_status)
     global $bg_color, $color, $bold, $b_end;
     static $row = 1;
     if ($row % 2 == 0) {
-        $bg_color = "background-color:white";
+        $bg_color = "background-color:white;";
     } else {
         $bg_color = "background-color:rgb(235, 233, 255);";
     }
@@ -67,20 +67,13 @@ function row_color($i_status)
     if ($i_status == "unread") {
         $bold = "<b>";
         $b_end = "</b>";
-        $color = "color:black";
+        $color = "color:black;";
     } else {
         $bold = "";
         $b_end = "";
-        $color = "color:grey";
+        $color = "color:grey;";
     }
 }
-function image_ext(){
-    $extention= array('jpeg','jpg','png');
-    foreach($extention as $ext){
-        echo $ext;
-    }
-}
-
 function usermail_as_me($sender_mail, $reciever_mail)
 {
     global $email, $result;
@@ -95,13 +88,13 @@ function mail_list_display($sender_mail, $reciever_mail, $token, $m_no, $subject
 {
     global $bold, $b_end, $bg_color, $color, $result;
 ?>
-    <tr style="<?= $bg_color, $color ?>">
+    <tr style="<?= $bg_color;$color ?>">
         <td style="width:10%;margin-left:20px;">
-            <input type="checkbox" name="archive-check" value="<?= $result['mail_no'] ?>">
-            <input type="checkbox" name="star-check" value="<?= $result['mail_no'] ?>">
+            <input type="checkbox" class="archive" name="archive-check[]" value="<?= $result['mail_no'] ?>">
+            <input type="checkbox" class="star" name="star-check[]" value="<?= $result['mail_no'] ?>">
         </td>
         <td style="width:30%;">
-            <a href="email.php?page=Email&token=<?= $result['token_id'] ?>&mailno=<?= $result['mail_no'] ?>">
+            <a href="email.php?page=Email&token=<?= $token ?>&mailno=<?= $m_no ?>">
                 <?= $bold . usermail_as_me($sender_mail, $reciever_mail) . $b_end ?>
             </a>
         </td>
@@ -112,7 +105,7 @@ function mail_list_display($sender_mail, $reciever_mail, $token, $m_no, $subject
         </td>
 
         <td style="width:10%;">
-            <a href="email.php?page=Email&token=<?= $result['token_id'] ?>&mailno=<?= $result['mail_no'] ?>">
+            <a href="email.php?page=Email&token=<?= $token ?>&mailno=<?= $m_no ?>">
                 <?= dateconvertion($date) ?>
             </a>
         </td>

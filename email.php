@@ -2,7 +2,7 @@
 session_start();
 include 'config.php';
 include 'email_function.php';
-$token_id = isset($_SESSION['token_id']) ? $_SESSION['token_id'] : "";
+$token_id = isset($_SESSION['token_id']) ? hex2bin($_SESSION['token_id']) : header("location:user_login.php");
 $user_details_query = "select * from user_details where token_id='{$token_id}';";
 $user_details_output = $conn->query($user_details_query);
 if (!is_bool($user_details_output)) {
@@ -43,10 +43,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                     echo "<div>";
                     if ($result['profile_status'] == 0) {
                         echo "<a href=\"?page=User\">";
-                        echo "<img src='Uploads/profile" . $token_id . ".png'>";
+                        echo "<img src='Uploads/profile" . $token_id . ".jpeg'>";
                     } else {
                         echo "<a href=\"?page=User\">";
-                        echo "<img src='Uploads/profiledefault.jpg'>";
+                        echo "<img src='Uploads/profiledefault.jpeg'>";
                     }
                     echo "</a>";
                     echo "</div>";
@@ -68,7 +68,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
         <?php
         switch ($page) {
             case 'Dashboard':
-        ?>
+                ?>
                 <div class="dashboard-container">
                     <div class="dashboard-content">
                         <div class="dashboard-counts">
@@ -81,7 +81,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 <?= total_mail("reciever_email", "and mail_status='sent')") ?>
                             </div>
                             <?php
-                            $get_user_details = "select * from user_details where token_id='{$token_id}'";
+                            $get_user_details = "select * from user_details where token_id='{$token_id}';";
                             $output = $conn->query($get_user_details);
                             $result = $output->fetch_assoc();
                             ?>
@@ -100,11 +100,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                         </div>
                     </div>
                 </div>
-            <?php
+                <?php
                 break;
-
             case 'Email':
-            ?>
+                ?>
                 <div class="email-container">
                     <div class="email-navigation-bar">
                         <form action="email.php?page=Email" method="post">
@@ -128,7 +127,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 </div>
                                 <div><input type="submit" name="draft" value="Draft"></div>
                                 <div class="email-count">
-                                    <?= total_mail("sender_email", "and mail_status='draft'") ?>
+                                    <?= total_mail("sender_email", "and mail_status='draft')") ?>
                                 </div>
                                 <div><input type="submit" name="starred" value="Starred"></div>
                                 <div class="email-count">
@@ -146,54 +145,36 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 </div>
                             </div>
                             <hr>
-
-                            <?php
-                            // echo "Folders <br>";
-                            // $label_button_query = "select distinct(label) from mail_list";
-                            // $output = $conn->query($label_button_query);
-                            // while ($result = $output->fetch_assoc()) {
-                            //     if ($result['label'] != null) {
-                            ?>
-                            <!-- <input type="submit" name="" value=""> -->
-                            <?php
-                            //     }
-                            // }
-                            ?>
                         </form><br>
                     </div>
                     <div class="mail-list">
                         <?php
-                        if (isset($_POST['logout'])) {
-                            session_unset();
-                            session_destroy();
-                            header("location:user_login.php");
-                        }
                         if (!isset($_POST['compose'])) {
-                        ?><div class="mail-list-options">
+                            ?>
+                            <div class="mail-list-options">
                                 <div>
                                     <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
-                                        <input type="submit" name="<?= name_setting('starred', 'unstar', 'star') ?>" value="<?= name_setting('starred', 'Unstar', 'Star') ?>">
-                                        <input type="submit" name="<?= name_setting('archived', 'unarchive', 'archive') ?>" value=" <?= name_setting('archived', 'Unarchive', 'Archive') ?>">
-                                        <input type="submit" name="<?= name_setting('trash', 'restore', 'delete') ?>" value="<?= name_setting('trash', 'Restore', 'Delete') ?>">
+                                        <input type="submit" name="<?= name_setting('starred', 'unstar', 'star') ?>"
+                                            value="<?= name_setting('starred', 'Unstar', 'Star') ?>">
+                                        <input type="submit" name="<?= name_setting('archived', 'unarchive', 'archive') ?>"
+                                            value=" <?= name_setting('archived', 'Unarchive', 'Archive') ?>">
+                                        <input type="submit" name="<?= name_setting('trash', 'restore', 'delete') ?>"
+                                            value="<?= name_setting('trash', 'Restore', 'Delete') ?>">
                                         <input type="submit" name="mark_as_read" value="Mark as read" style="width: 100px;">
                                 </div>
-                                <!-- <div>
-                                    <input type="text" name="label_input" placeholder="Label name">
-                                    <input type="submit" name="label" value="Label">
-                                </div> -->
                                 <div>
                                     <input type="search" name="search" placeholder="search mail">
                                     <input type="submit" name="search-btn" value="search">
                                 </div><br><br>
                             </div>
-                        <?php
+                            <?php
                         } elseif (isset($_POST['compose'])) {
-                        ?>
+                            ?>
                             <div class="email_form">
                                 <form action="email.php?page=Email" method="post">
                                     <input type="submit" name="send" value="Send mail">
                                     <input type="reset" value="Clear"><br><br>
-                                    <label for="mail">TO:</label>
+                                    <label for="mail">TO:</label><br>
                                     <input type="text" id="mail" name="mail" required><br><br>
                                     <label for="cc" style="margin-right:16px;">CC:</label>
                                     <input type="text" id="cc" name="cc"><br><br>
@@ -206,7 +187,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 </form>
                             </div>
                             <div class="mail-list-table">
-                            <?php
+                                <?php
                         }
                         if (isset($_POST['send'])) {
                             if (!empty($_POST['mail']) && !empty($_POST['subject']) && !empty($_POST['notes'])) {
@@ -221,14 +202,16 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                     if (mail($to_mail, $subject, $notes)) {
                                         $mail_status = "sent";
                                         $mail_no = "TH021";
+                                        $updated_by =$user_details_result['username'];
+                                        $created_by =$user_details_result['username'];
                                         $insert_query = $conn->prepare("insert into mail_list ( token_id, mail_no, sender_email, username, reciever_email, cc, bcc, subject, notes, date_of_sending, mail_status,updated_by, created_by, updated_on) values(?,?,?,?,?,?,?,?,?,current_timestamp,?,?,?,current_timestamp)");
                                         $insert_query->bind_param(
                                             "ssssssssssss",
                                             $token_id,
                                             $mail_no,
                                             $email,
-                                            $result['username'],
-                                            $to_email,
+                                            $user_details_result['username'],
+                                            $to_mail,
                                             $cc,
                                             $bcc,
                                             $subject,
@@ -323,7 +306,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 mail_list_display($result['sender_email'], $result['reciever_email'], $result['token_id'], $result['mail_no'], $result['subject'], $result['date_of_sending']);
                             }
                         }
-                            ?>
+                        ?>
                             <div class="mail-list">
                                 <div class="mail-display">
                                     <?php
@@ -331,7 +314,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                     $token_id = isset($_GET['token']) ? $_GET['token'] : "";
                                     $mail_no = isset($_GET['mailno']) ? $_GET['mailno'] : "";
                                     if (!empty($token_id) && !empty($mail_no)) {
-                                    ?>
+                                        ?>
                                         <form action="email.php?page=Email" method="post">
                                             <a href="email.php?page=Email"><button>
                                                     << </button></a><br><br>
@@ -344,192 +327,214 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                         $result = $select_query_output->fetch_assoc();
                                         ?>
                                         <label>From:</label>
-                                        <input type="text" name="sender_email" id="sender_email" value="<?= $result['sender_email'] ?>" readonly>
+                                        <input type="text" name="sender_email" id="sender_email"
+                                            value="<?= $result['sender_email'] ?>" readonly>
                                         <br><br>
                                         <label>To:</label>
-                                        <input type="text" name="reciever_email" id="reciever_email" value="<?= $result['reciever_email'] ?>" readonly><br><br>
+                                        <input type="text" name="reciever_email" id="reciever_email"
+                                            value="<?= $result['reciever_email'] ?>" readonly><br><br>
                                         <label>Subject:</label>
-                                        <input type="text" name="mail_subject" id="subject" value="<?= $result['subject'] ?>" readonly><br><br>
+                                        <input type="text" name="mail_subject" id="subject" value="<?= $result['subject'] ?>"
+                                            readonly><br><br>
                                         <?php
                                         if (empty($result['cc']) && empty($result['bcc'])) {
                                         } else {
-                                        ?>
+                                            ?>
                                             <label>Cc:</label>
                                             <input type="text" name="Cc" id="cc" value="<?= $result['cc'] ?>" readonly><br><br>
                                             <label>Bcc:</label>
                                             <input type="text" name="Bcc" id="bcc" value="<?= $result['bcc'] ?>" readonly><br><br>
-                                        <?php
+                                            <?php
                                         }
                                         ?>
                                         <br>
                                         <textarea name="mail_body" readonly><?= $result['notes'] ?></textarea><br><br>
+                                    </div>
                                 </div>
-                            </div>
 
-                            </table>
-                        <?php
+                                </table>
+                                <?php
                                     }
                                     $starred_mail = !empty($_POST['star-check']) ? $_POST['star-check'] : "";
                                     $archive_mail = !empty($_POST['archive-check']) ? $_POST['archive-check'] : "";
                                     if (isset($_POST['star'])) {
-                                        $star_query = "update mail_list set starred='yes' where mail_no='$starred_mail';";
-                                        $star_output = $conn->query($star_query);
+                                        foreach ($starred_mail as $mail_number) {
+                                            $star_query = "update mail_list set starred='yes' where mail_no='$mail_number';";
+                                            $star_output = $conn->query($star_query);
+                                        }
                                     } elseif (isset($_POST['archive'])) {
-                                        $archive_query = "update mail_list set archived='yes' where mail_no='$archive_mail';";
-                                        $archive_output = $conn->query($archive_query);
+                                        foreach ($archive_mail as $mail_number) {
+                                            $archive_query = "update mail_list set archived='yes' where mail_no='$mail_number';";
+                                            $archive_output = $conn->query($archive_query);
+                                        }
                                     } elseif (isset($_POST['delete'])) {
-                                        $delete_query = "update mail_list set mail_status='trash' where mail_no='$archive_mail';";
-                                        $delete_output = $conn->query($delete_query);
-                                        // } elseif (isset($_POST['label'])) {
-                                        //     $mail_no = !empty($_POST['archive']) ? $_POST['archive'] : "";
-                                        //     $label = !empty($_POST['label_input']) ? $_POST['label_input'] : "";
-                                        //     $label_query = "update mail_list set label='{$label}' where mail_no='{$mail_no}'";
-                                        //     $label_query_output = $conn->query($label_query);
+                                        foreach ($archive_mail as $mail_number) {
+                                            $delete_query = "update mail_list set mail_status='trash' where mail_no='$mail_number';";
+                                            $delete_output = $conn->query($delete_query);
+                                        }
                                     } elseif (isset($_POST['mark_as_read'])) {
-                                        $mark_as_read_query = "update mail_list set inbox_status='read' where mail_no='$archive_mail';";
-                                        $mark_as_read_output = $conn->query($mark_as_read_query);
+                                        foreach ($archive_mail as $mail_number) {
+                                            $mark_as_read_query = "update mail_list set inbox_status='read' where mail_no='$mail_number';";
+                                            $mark_as_read_output = $conn->query($mark_as_read_query);
+                                        }
                                     } elseif (isset($_POST['unarchive'])) {
-                                        $unarchive_query = "update mail_list set archived='no' where mail_no='$archive_mail';";
-                                        $unarchive_query_output = $conn->query($unarchive_query);
+                                        foreach ($archive_mail as $mail_number) {
+                                            $unarchive_query = "update mail_list set archived='no' where mail_no='$mail_number';";
+                                            $unarchive_query_output = $conn->query($unarchive_query);
+                                        }
                                     } elseif (isset($_POST['unstar'])) {
-                                        $unstar_query = "update mail_list set starred='no' where mail_no='$starred_mail';";
-                                        $unstar_output = $conn->query($unstar_query);
+                                        foreach ($starred_mail as $mail_number) {
+                                            $unstar_query = "update mail_list set starred='no' where mail_no='$mail_number';";
+                                            $unstar_output = $conn->query($unstar_query);
+                                        }
                                     } elseif (isset($_POST['restore'])) {
-                                        $restore_query = "update mail_list set mail_status='sent' where mail_no='$archive_mail'";
-                                        $restore_output = $conn->query($restore_query);
+                                        foreach ($archive_mail as $mail_number) {
+                                            $restore_query = "update mail_list set mail_status='sent' where mail_no='$mail_number'";
+
+                                            $restore_output = $conn->query($restore_query);
+                                        }
                                     }
                                     break;
-                                case 'Chat':
-                        ?>
-                        <div class="chat-conatiner">
-                            <div class="chat-content">
-                                <?php
+            case 'Chat':
+                ?>
+                            <div class="chat-conatiner">
+                                <div class="chat-content">
+                                    <?php
                                     echo "<h2>Chat will be available soon</h2>";
-                                ?>
-                            </div>
-                        </div>
-                    <?php
-                                    break;
-
-                                case 'User':
-                    ?>
-                        <div class="profile-container">
-                            <div class="profile_picture">
-                                <div>
-                                    <h3>Profile</h3>
+                                    ?>
                                 </div>
-                                <?php
+                            </div>
+                            <?php
+                            break;
+
+            case 'User':
+                ?>
+                            <div class="profile-container">
+                                <div class="profile_picture">
+                                    <div>
+                                        <h3>Profile</h3>
+                                    </div>
+                                    <?php
                                     $user_details_query = "select * from user_details where token_id='$token_id'";
                                     $output = $conn->query($user_details_query);
                                     $result = $output->fetch_assoc();
                                     echo "<div>";
                                     if ($result['profile_status'] == 0) {
-                                        echo "<img src='Uploads/profile" . $token_id . "." . image_ext() . "'>";
+                                        echo "<img src='Uploads/profile" . $token_id . ".jpeg'>";
                                     } else {
-                                        echo "<img src='Uploads/profiledefault.jpg'>";
+                                        echo "<img src='Uploads/profiledefault.jpeg'>";
                                     }
                                     echo "</div>";
+                                    ?>
+                                </div>
+                                <?php
+                                if (isset($_POST['logout'])) {
+                                    session_unset();
+                                    session_destroy();
+                                    header("location:user_login.php");
+                                }
+                                if (!isset($_POST['edit'])) {
+                                    ?>
+                                    <div class="user_details">
+                                        <form action="email.php?page=User" enctype="multipart/form-data" method="post">
+                                            <input type="submit" name="edit" value="Edit">
+                                            <input type="submit" name="logout" value="Log out"><br><br>
+                                            <label for="username">Username</label>
+                                            <input type="text" id="username" name="user_name" value="<?= $result['username'] ?>"
+                                                readonly><br><br>
+                                            <label for="name">Name</label>
+                                            <input type="text" id="name" name="name" value="<?= $result['name'] ?>"
+                                                readonly><br><br>
+                                            <label for="dob">Date of birth</label>
+                                            <input type="text" id="dob" name="dob" value="<?= $result['date_of_birth'] ?>"
+                                                readonly><br><br>
+                                            <label for="email">Email</label>
+                                            <input type="text" id="email" name="email" value="<?= $result['email'] ?>"
+                                                readonly><br><br>
+                                            <label for="cell_number">Mobile number</label>
+                                            <input type="text" id="cell_number" name="cell_number"
+                                                value="<?= $result['phone_no'] ?>" readonly><br><br>
+                                        </form>
+                                    </div>
+                                    <?php
+                                }
+                                if (isset($_POST['edit'])) {
+                                    ?>
+                                    <div class="user_details">
+                                        <form action="email.php?page=User" enctype="multipart/form-data" method="post">
+                                            <input type="file" name="file" id="fileInput" style="display: none;">
+                                            <label for="fileInput" style="color:rgb(114, 98, 255)">Update profile
+                                                picture</label>
+                                            <input type="submit" name="save" value="Save"><br><br>
+                                            <label for="username">Username</label>
+                                            <input type="text" id="username" name="user_name" value="<?= $result['username'] ?>"
+                                                readonly><br><br>
+                                            <label for="name">Name</label>
+                                            <input type="text" id="name" name="name" value="<?= $result['name'] ?>"><br><br>
+                                            <label for="dob">Date of birth</label>
+                                            <input type="date" id="dob" name="dob" value="<?= $result['date_of_birth'] ?>"><br><br>
+                                            <label for="email">Email</label>
+                                            <input type="text" id="email" name="email" value="<?= $result['email'] ?>"
+                                                readonly><br><br>
+                                            <label for="cell_number">Mobile number</label>
+                                            <input type="text" id="cell_number" name="cell_number"
+                                                value="<?= $result['phone_no'] ?>"><br><br>
+                                        </form>
+                                    </div>
+                                </div>
+                                <?php
+                                }
+
                                 ?>
-                                <div class="log-out">
-                                    <form action="email.php" enctype="multipart/form-data" method="post">
-                                        <input type="submit" name="logout" value="Log out"><br><br>
-                                    </form>
-                                </div>
-                            </div>
-                            <?php
-                                    if (!isset($_POST['edit'])) {
-                            ?>
-                                <div class="user_details">
-                                    <form action="email.php?page=User" enctype="multipart/form-data" method="post">
-                                        <input type="submit" name="edit" value="Edit"><br><br>
-                                        <label for="username">Username</label>
-                                        <input type="text" id="username" name="user_name" value="<?= $result['username'] ?>" readonly><br><br>
-                                        <label for="name">Name</label>
-                                        <input type="text" id="name" name="name" value="<?= $result['name'] ?>" readonly><br><br>
-                                        <label for="dob">Date of birth</label>
-                                        <input type="text" id="dob" name="dob" value="<?= $result['date_of_birth'] ?>" readonly><br><br>
-                                        <label for="email">Email</label>
-                                        <input type="text" id="email" name="email" value="<?= $result['email'] ?>" readonly><br><br>
-                                        <label for="cell_number">Mobile number</label>
-                                        <input type="text" id="cell_number" name="cell_number" value="<?= $result['phone_no'] ?>" readonly><br><br>
-                                    </form>
-                                </div>
-                            <?php
-                                    }
-                                    if (isset($_POST['edit'])) {
-                            ?>
-                                <div class="user_details">
-                                    <form action="email.php?page=User" enctype="multipart/form-data" method="post">
-                                        <input type="file" name="file" id="fileInput" style="display: none;">
-                                        <label for="fileInput" style="color:rgb(114, 98, 255)">Update profile
-                                            picture</label>
-                                        <input type="submit" name="save" value="Save"><br><br>
-                                        <label for="username">Username</label>
-                                        <input type="text" id="username" name="user_name" value="<?= $result['username'] ?>" readonly><br><br>
-                                        <label for="name">Name</label>
-                                        <input type="text" id="name" name="name" value="<?= $result['name'] ?>"><br><br>
-                                        <label for="dob">Date of birth</label>
-                                        <input type="date" id="dob" name="dob" value="<?= $result['date_of_birth'] ?>"><br><br>
-                                        <label for="email">Email</label>
-                                        <input type="text" id="email" name="email" value="<?= $result['email'] ?>" readonly><br><br>
-                                        <label for="cell_number">Mobile number</label>
-                                        <input type="text" id="cell_number" name="cell_number" value="<?= $result['phone_no'] ?>"><br><br>
-                                    </form>
-                                </div>
-                        </div>
-                    <?php
-                                    }
 
-                    ?>
-
-                    <?php
-                                    if (isset($_POST['save'])) {
-                                        if (!empty($_POST)) {
-                                            $update_details = "update user_details set username='{$_POST['user_name']}', name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
-                                            $conn->query($update_details);
-                                        }
-                                        if (!empty($_FILES['file'])) {
-                                            $file = $_FILES['file'];
-                                            $file_array = array("file_name" => $file['name'], "file_type" => $file['type'], "file_tmp_name" => $file['tmp_name'], "file_error" => $file['error'], "file_size" => $file['size']);
-                                            $file_ext = explode(".", $file_array["file_name"]);
-                                            $file_actual_ext = strtolower(end($file_ext));
-                                            $allowed_ext = array('jpg', 'jpeg', 'png');
-                                            if (in_array($file_actual_ext, $allowed_ext)) {
-                                                if ($file_array['file_error'] == 0) {
-                                                    if ($file_array['file_size'] < 1000000) {
-                                                        $file_new_name = "profile" . $token_id . "." . $file_actual_ext;
-                                                        $file_destination = "Uploads/$file_new_name";
-                                                        move_uploaded_file($file_array['file_tmp_name'], $file_destination);
-                                                        $image_query = "update user_details set profile_status=0 where token_id='{$token_id}'";
-                                                        $image_query_output = $conn->query($image_query);
-                                                        // header("location:email.php?page=User");
-                                                    } else {
-                                                        echo "Please upload a picture less than 1mb";
-                                                    }
-                                                } else {
-                                                    echo "upload unsuccessfull!";
-                                                }
+                            <?php
+                            if (isset($_POST['save'])) {
+                                if (!empty($_POST)) {
+                                    $update_details = "update user_details set username='{$_POST['user_name']}', name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
+                                    $conn->query($update_details);
+                                }
+                                if (!empty($_FILES['file'])) {
+                                    $file = $_FILES['file'];
+                                    $file_array = array("file_name" => $file['name'], "file_type" => $file['type'], "file_tmp_name" => $file['tmp_name'], "file_error" => $file['error'], "file_size" => $file['size']);
+                                    $file_ext = explode(".", $file_array["file_name"]);
+                                    $file_actual_ext = strtolower(end($file_ext));
+                                    $allowed_ext = array('jpg', 'jpeg', 'png');
+                                    if (in_array($file_actual_ext, $allowed_ext)) {
+                                        if ($file_array['file_error'] == 0) {
+                                            if ($file_array['file_size'] < 1000000) {
+                                                $file_new_name = "profile" . $token_id . ".jpeg";
+                                                $file_destination = "Uploads/$file_new_name";
+                                                move_uploaded_file($file_array['file_tmp_name'], $file_destination);
+                                                $image_query = "update user_details set profile_status=0 where token_id='{$token_id}'";
+                                                $image_query_output = $conn->query($image_query);
+                                                // header("location:email.php?page=User");
                                             } else {
-                                                echo "Image format must be jpg, jpeg, png";
+                                                echo "Please upload a picture less than 1mb";
                                             }
+                                        } else {
+                                            echo "upload unsuccessfull!";
                                         }
+                                    } else {
+                                        echo "Image format must be jpg, jpeg, png";
                                     }
-
-                                    break;
-                                case 'Calender':
-                    ?>
-                    <div class="calendar-container">
-                        <div class="calender-content">
-                            <h4>calender will be available soon</h4>
-                        </div>
-                    </div>
-            <?php
+                                }
                             }
-            ?>
-            </form>
+
+                            break;
+            case 'Calender':
+                ?>
+                            <div class="calendar-container">
+                                <div class="calender-content">
+                                    <h4>calender will be available soon</h4>
+                                </div>
                             </div>
-                    </div>
+                        <?php
+        }
+        ?>
+                    </form>
                 </div>
+            </div>
+        </div>
 </body>
 
 </html>

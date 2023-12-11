@@ -79,10 +79,6 @@
     box-shadow: 3px 3px 6px rgb(215, 212, 255);
 }
 
-.vertical-navigation-bar ul li a:active {
-    background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
-}
-
 .email-container {
     display: grid;
     grid-template-columns: 20% 85%;
@@ -202,6 +198,7 @@
 input[type="reset" i] {
     background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
     margin: 7.5px 0px;
+    margin-right: 15px;
     width: 100px;
     height: 30px;
     border: none;
@@ -211,7 +208,7 @@ input[type="reset" i] {
 }
 
 .email_form input[type="text" i] {
-    width: 97%;
+    width: 100%;
     height: 30px;
     border-style: solid;
     border-color: grey;
@@ -235,20 +232,38 @@ textarea {
 table {
     border-collapse: collapse;
     width: 100%;
-    color: grey;
 }
 
 tr {
     height: 35px;
 }
 
-input[type="checkbox" i] {
+.archive {
     margin-left: 15px;
+    vertical-align: middle;
 }
 
-a {
-    color: black;
+.star {
+    margin: -4.5px 10px;
+    visibility: hidden;
+    font-size: 20px;
+    cursor: pointer;
+    vertical-align: top;
 }
+
+.star:before {
+    content: "\2606";
+    position: absolute;
+    visibility: visible;
+    color: rgb(82, 82, 82);
+}
+
+.star:checked:before {
+    content: "\2605";
+    position: absolute;
+    color: rgb(114, 98, 255);
+}
+
 
 .chat-conatiner {
     background-color: whitesmoke;
@@ -328,7 +343,7 @@ input[type="date" i] {
 
 .user_details input[type="submit" i] {
     background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
-    margin: 7.5px 0px;
+    margin: 7.5px 20px 7.5px 0px;
     width: 100px;
     height: 30px;
     border: none;
