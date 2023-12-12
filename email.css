@@ -194,9 +194,8 @@
     margin: 15px;
 }
 
-.email_form input[type="submit" i],
-input[type="reset" i] {
-    background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
+.email_form input[type="submit" i],input[type="reset" i] {
+    /* background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%); */
     margin: 7.5px 0px;
     margin-right: 15px;
     width: 100px;
@@ -458,8 +457,75 @@ input[type="date" i] {
 }
 
 .super-admin-login {
-    width: 70%;
-    height: 50%;
+    margin: 5% 30%;
+    width: 50%;
+    height: 50vh;
     text-align: center;
     vertical-align: middle;
+    border-style: solid;
+    border-color: whitesmoke;
+    border-radius: 20px;
+    box-shadow: 3px 3px 3px 3px whitesmoke;
+}
+
+.super-admin-login h4 {
+    margin: 5% 20%;
+    padding: 1% 0%;
+    border-radius: 5px;
+    background-color: rgb(235, 233, 255);
+}
+
+.super-admin-login input[type="text" i],
+input[type="password" i] {
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    width: 100%;
+    height: 30px;
+    padding-left: 10px;
+    outline: none;
+}
+
+.super-admin-login form {
+    margin: 5% 15%;
+    line-height: 20px;
+}
+
+.super-admin-login label {
+    color: rgb(136, 136, 136);
+    font-size: 14px;
+}
+
+.super-admin-login input[type="submit" i] {
+    color: white;
+    background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
+    width: 150px;
+    margin-right: 10px;
+    height: 25px;
+    outline: none;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.super-admin-login input[type="submit" i]:hover {
+    box-shadow: 3px 3px 6px rgb(215, 212, 255);
+}
+
+.super-admin-login input[type="reset" i] {
+    color: rgb(114, 98, 255);
+    background-color: white;
+    width: 150px;
+    margin-right: 10px;
+    height: 25px;
+    outline: none;
+    border: solid;
+    border-width: 1px;
+    border-color: rgb(114, 98, 255)9;
+    border-radius: 3px;
+    cursor: pointer;
+}
+
+.super-admin-login input[type="reset" i]:hover {
+    box-shadow: 3px 3px 6px rgb(215, 212, 255);
 }

@@ -17,6 +17,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
 
 <head>
     <meta charset="UTF-8">
+    <!-- <meta http-equiv="refresh" content="10"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="email.css">
@@ -370,7 +371,6 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                     } elseif (isset($_POST['restore'])) {
                                         foreach ($archive_mail as $mail_number) {
                                             $restore_query = "update mail_list set mail_status='sent' where mail_no='$mail_number'";
-
                                             $restore_output = $conn->query($restore_query);
                                         }
                                     }
@@ -397,11 +397,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 <?php require "profile_picture.php" ?>
                             </div>
                             <?php
-                                    if (isset($_POST['logout'])) {
-                                        session_unset();
-                                        session_destroy();
-                                        header("location:user_login.php");
-                                    }
+
                                     if (!isset($_POST['edit'])) {
                             ?>
                                 <div class="user_details">
@@ -469,7 +465,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                                         move_uploaded_file($file_array['file_tmp_name'], $file_destination);
                                                         $image_query = "update user_details set profile_status=0 where token_id='{$token_id}'";
                                                         $image_query_output = $conn->query($image_query);
-                                                        // header("location:email.php?page=User");
+                                                        header("location:email.php?page=User");
                                                     } else {
                                                         echo "Please upload a picture less than 1mb";
                                                     }
@@ -481,7 +477,11 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                             }
                                         }
                                     }
-
+                                    if (isset($_POST['logout'])) {
+                                        session_unset();
+                                        session_destroy();
+                                        header("location:user_login.php");
+                                    }
                                     break;
                                 case 'Calender':
                     ?>

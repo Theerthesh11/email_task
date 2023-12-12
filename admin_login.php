@@ -47,7 +47,7 @@ include 'config.php';
             $username = $_POST['username'];
             $get_query = "select * from admin_details where username='{$username}';";
             $get_query_output = $conn->query($get_query);
-            if (is_bool($get_query_output)) {
+            if (!is_bool($get_query_output)) {
             }
         }
         if (!empty(($_POST['password']))) {
@@ -58,11 +58,17 @@ include 'config.php';
             $result = $get_query_output->fetch_assoc();
             if ($result['password'] == $password) {
                 $emp_id = $result['emp_id'];
+                $name = $result['name'];
+                $role = $result['role'];
+                $_SESSION['token_id'] = $result['token_id'];
                 $activity = "";
-                $date = date("Y/m/d");
-                $time = date("h:i:sa");
-                $insert_query = "insert into login_activity (emp_id, activity, date, time) values('{$emp_id}','{$activity}','{$date}','{$time}')";
-                $insert__output = $conn->query($insert_query);
+                date_default_timezone_set('Asia/Kolkata');
+                $login_time = date('y-m-d H:i:s');
+                $activity_insert_query = "insert into login_activity (emp_id,name,role, activity, login_time) values('$emp_id','$name','$role','$activity','$login_time')";
+                $activity_insert_output = $conn->query($activity_insert_query);
+                $login_update_query = "update admin_details set last_login=current_timestamp;";
+                $login_update_output = $conn->query($login_update_query);
+                $_SESSION['login_time'] = $login_time;
                 header("location:admin_dashboard.php");
             } else {
                 echo "incorrect password";

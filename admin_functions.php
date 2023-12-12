@@ -33,7 +33,7 @@ function total_admins($addition = "")
 }
 
 
-function pagination($table_name, $query = "select * from user_details")
+function pagination($table_name, $page, $query = "select * from user_details")
 {
     require "config.php";
     $query = "select * from $table_name";
@@ -58,29 +58,81 @@ function pagination($table_name, $query = "select * from user_details")
         }
 ?>
         <tr style="<?= $bg_color; ?>">
-            <td style="width:20%;margin-left:20px;">
-                <?= $user_details_result['name'] ?>
-            </td>
-            <td style="width:28%;">
-                <?= $user_details_result['email'] ?>
-            </td>
-            <td style="width:13%;">
-                <?= $user_details_result['date_of_birth'] ?>
-            </td>
-            <td style="width:13%;">
-                <?= $user_details_result['phone_no'] ?>
-            </td>
-            <td style="width:13%;">
-                <?= $user_details_result['created_on'] ?>
-            </td>
-            <td style="width:13%;">
-                <?= $user_details_result['last_login'] ?>
-            </td>
+            <td style="width:20%;margin-left:20px;"><?= $user_details_result['name'] ?></td>
+            <td style="width:28%;"><?= $user_details_result['email'] ?></td>
+            <td style="width:13%;"><?= $user_details_result['date_of_birth'] ?></td>
+            <td style="width:13%;"><?= $user_details_result['phone_no'] ?></td>
+            <td style="width:13%;"><?= $user_details_result['created_on'] ?></td>
+            <td style="width:13%;"><?= $user_details_result['last_login'] ?></td>
         </tr>
-<?php
+        <?php
         $row++;
     }
     for ($page_no = 1; $page_no <= $number_of_page; $page_no++) {
-        echo '<a href = "admin_dashboard.php?page=User List&page_no=' . $page_no . '">' . $page_no . ' </a>';
+        echo '<a href = "admin_dashboard.php?page=' . $page . '&page_no=' . $page_no . '">' . $page_no . ' </a>';
     }
+}
+
+function admin_details()
+{
+    require "config.php";
+    $admin_details_query = "select * from admin_details;";
+    $admin_details_output = $conn->query($admin_details_query);
+    if (!is_bool($admin_details_output)) {
+        while ($admin_details_result = $admin_details_output->fetch_assoc()) {
+            static $row = 1;
+            if ($row % 2 == 0) {
+                $bg_color = "background-color:rgb(235, 233, 255);";
+            } else {
+                $bg_color = "background-color:white;";
+            }
+        ?>
+            <tr style="<?= $bg_color; ?>">
+                <td><?= $admin_details_result['emp_id'] ?></td>
+                <td><?= $admin_details_result['name'] ?></td>
+                <td><?= $admin_details_result['email'] ?></td>
+                <td><?= $admin_details_result['role'] ?></td>
+                <td><?= $admin_details_result['phone_no'] ?></td>
+                <td><?= $admin_details_result['date_of_birth'] ?></td>
+                <td><?= $admin_details_result['created_on'] ?></td>
+                <td><?= $admin_details_result['last_login'] ?></td>
+            </tr>
+        <?php
+            $row++;
+        }
+    }
+}
+
+function login_activity()
+{
+    require "config.php";
+    $login_activity_query = "select * from login_activity;";
+    $login_activity_output = $conn->query($login_activity_query);
+    if (!is_bool($login_activity_output)) {
+        while ($login_activity_result = $login_activity_output->fetch_assoc()) {
+            static $row = 1;
+            if ($row % 2 == 0) {
+                $bg_color = "background-color:rgb(235, 233, 255);";
+            } else {
+                $bg_color = "background-color:white;";
+            }
+        ?>
+            <tr style="<?= $bg_color; ?>">
+                <td><?= $login_activity_result['emp_id'] ?></td>
+                <td><?= $login_activity_result['name'] ?></td>
+                <td><?= $login_activity_result['role'] ?></td>
+                <td><?= $login_activity_result['activity'] ?></td>
+                <td><?= $login_activity_result['login_time'] ?></td>
+                <td><?= $login_activity_result['logout_time'] ?></td>
+    <?php
+            $row++;
+        }
+    }
+}
+
+function activity($activity, $emp_id, $login_time)
+{
+    require "config.php";
+    $activity_query = "update login_activity set activity = CONCAT(activity, '$activity') WHERE emp_id='$emp_id' and login_time='$login_time';";
+    $conn->query($activity_query);
 }
