@@ -45,11 +45,11 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
         <div class="vertical-navigation-bar">
             <ul>
                 <br><br>
-                <li><a href="?page=Dashboard"><button>Dashboard</button></a></li>
-                <li><a href="?page=Email"><button>Email</button></a></li>
-                <li><a href="?page=Chat"><button>Chat</button></a></li>
-                <li><a href="?page=User"><button>User</button></a></li>
-                <li><a href="?page=Calendar"><button>Calender</button></a></li>
+                <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>>Dashboard</button></a></li>
+                <li><a href="?page=Email"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
+                <li><a href="?page=Chat"><button <?= isset($_GET['page']) && $_GET['page'] === 'Chat' ? '" class="active"' : '' ?>>Chat</button></a></li>
+                <li><a href="?page=User"><button <?= isset($_GET['page']) && $_GET['page'] === 'User' ? '" class="active"' : '' ?>>User</button></a></li>
+                <li><a href="?page=Calender"><button <?= isset($_GET['page']) && $_GET['page'] === 'Calender' ? '" class="active"' : '' ?>>Calender</button></a></li>
             </ul>
         </div>
         <?php
@@ -148,7 +148,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                                 </div>
                                 <div>
                                     <input type="search" name="search" placeholder="search mail">
-                                    <input type="submit" name="search-btn" value="search">
+                                    <input type="submit" name="search-btn" value="Search">
                                 </div><br><br>
                             </div>
                         <?php
@@ -491,6 +491,10 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
                         </div>
                     </div>
             <?php
+                                    break;
+                                default:
+                                    header("location:email.php?page=Email");
+                                    break;
                             }
             ?>
             </form>

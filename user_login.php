@@ -52,12 +52,14 @@ include 'config.php';
 
                         //assigning sanitized and validate password to password variable 
                         $password = htmlspecialchars($_POST['password']);
-                        $result = $get_query_output->fetch_assoc();
-                        if ($result['password'] == $password) {
-                            $_SESSION['token_id'] = bin2hex($result['token_id']);
-                            header("location:email.php");
-                        } else {
-                            echo "<h6 style=\"text-align: center; color:red;\">Incorrect password</h6>";
+                        if (!is_bool($get_query_output)) {
+                            $result = $get_query_output->fetch_assoc();
+                            if ($result['password'] == $password) {
+                                $_SESSION['token_id'] = bin2hex($result['token_id']);
+                                header("location:email.php?page=Email");
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Incorrect password</h6>";
+                            }
                         }
                     }
                 }

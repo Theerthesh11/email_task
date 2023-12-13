@@ -60,17 +60,18 @@ function pagination($table_name, $page, $query = "select * from user_details")
         <tr style="<?= $bg_color; ?>">
             <td style="width:20%;margin-left:20px;"><?= $user_details_result['name'] ?></td>
             <td style="width:28%;"><?= $user_details_result['email'] ?></td>
-            <td style="width:13%;"><?= $user_details_result['date_of_birth'] ?></td>
-            <td style="width:13%;"><?= $user_details_result['phone_no'] ?></td>
-            <td style="width:13%;"><?= $user_details_result['created_on'] ?></td>
-            <td style="width:13%;"><?= $user_details_result['last_login'] ?></td>
+            <td style="width:13%;text-align:center"><?= $user_details_result['date_of_birth'] ?></td>
+            <td style="width:13%;text-align:center"><?= $user_details_result['phone_no'] ?></td>
+            <td style="width:13%;text-align:center"><?= $user_details_result['created_on'] ?></td>
+            <td style="width:13%;text-align:center"><?= $user_details_result['last_login'] ?></td>
         </tr>
         <?php
         $row++;
     }
     for ($page_no = 1; $page_no <= $number_of_page; $page_no++) {
-        echo '<a href = "admin_dashboard.php?page=' . $page . '&page_no=' . $page_no . '">' . $page_no . ' </a>';
+        echo '<a href = "admin_dashboard.php?page=' . $page . '&page_no=' . $page_no . '"><button >' .  $page_no . '</button> </a>';
     }
+    echo "<br><hr><br>";
 }
 
 function admin_details()
@@ -88,14 +89,14 @@ function admin_details()
             }
         ?>
             <tr style="<?= $bg_color; ?>">
-                <td><?= $admin_details_result['emp_id'] ?></td>
+                <td style="text-align: center;"><?= $admin_details_result['emp_id'] ?></td>
                 <td><?= $admin_details_result['name'] ?></td>
                 <td><?= $admin_details_result['email'] ?></td>
-                <td><?= $admin_details_result['role'] ?></td>
-                <td><?= $admin_details_result['phone_no'] ?></td>
-                <td><?= $admin_details_result['date_of_birth'] ?></td>
-                <td><?= $admin_details_result['created_on'] ?></td>
-                <td><?= $admin_details_result['last_login'] ?></td>
+                <td style="text-align: center;"><?= $admin_details_result['role'] ?></td>
+                <td style="text-align: center;"><?= $admin_details_result['phone_no'] ?></td>
+                <td style="text-align: center;"><?= $admin_details_result['date_of_birth'] ?></td>
+                <td style="text-align: center;"><?= $admin_details_result['created_on'] ?></td>
+                <td style="text-align: center;"><?= $admin_details_result['last_login'] ?></td>
             </tr>
         <?php
             $row++;
@@ -135,4 +136,25 @@ function activity($activity, $emp_id, $login_time)
     require "config.php";
     $activity_query = "update login_activity set activity = CONCAT(activity, '$activity') WHERE emp_id='$emp_id' and login_time='$login_time';";
     $conn->query($activity_query);
+}
+
+function profile_picture($token_id)
+{
+    require "config.php";
+    $user_details_query = "select * from admin_details where token_id='$token_id';";
+    $output = $conn->query($user_details_query);
+    if (!is_bool($output)) {
+        $result = $output->fetch_assoc();
+        echo "<div>";
+        if ($result['profile_status'] == 0) {
+            $tkn_id = bin2hex($token_id);
+            echo "<a href=\"?page=Admin\">";
+            echo "<img src='Uploads/admin/profile" . $tkn_id . ".jpg'>";
+        } else {
+            echo "<a href=\"?page=Admin\">";
+            echo "<img src='Uploads/profiledefault.jpg'>";
+        }
+        echo "</a>";
+        echo "</div>";
+    }
 }

@@ -5,10 +5,12 @@ require_once "config.php";
 $token_id = isset($_SESSION['token_id']) ? $_SESSION['token_id'] : header("location:admin_login.php");
 $admin_details_query = "select * from admin_details where token_id='$token_id';";
 $admin_details_output = $conn->query($admin_details_query);
-if (!is_bool($admin_details_output)) {
+if ($admin_details_output->num_rows > 0) {
     $admin_details = $admin_details_output->fetch_assoc();
     $emp_id = $admin_details['emp_id'];
     $login_time = isset($_SESSION['login_time']) ? $_SESSION['login_time'] : header("location:admin_login.php");
+} else {
+    header("location:admin_login.php");
 }
 ?>
 <!DOCTYPE html>
@@ -46,17 +48,18 @@ if (!is_bool($admin_details_output)) {
         <div class="vertical-navigation-bar">
             <ul>
                 <br><br>
-                <li><a href="?page=I-Box Dashboard"><button>I-Box Dashboard</button></a></li>
-                <li><a href="?page=Admin List"><button>Admin list</button></a></li>
-                <li><a href="?page=User List"><button>User list</button></a></li>
-                <li><a href="?page=Login Activity"><button>Login activity</button></a></li>
-                <li><a href="?page=Admin"><button>Admin</button></a></li>
+                <li><a href="?page=I-Box Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'I-Box Dashboard' ? '" class="active"' : '' ?>>I-Box Dashboard</button></a></li>
+                <li><a href="?page=Admin List"><button <?= isset($_GET['page']) && $_GET['page'] === 'Admin List' ? '" class="active"' : '' ?>>Admin list</button></a></li>
+                <li><a href="?page=User List"><button <?= isset($_GET['page']) && $_GET['page'] === 'User List' ? '" class="active"' : '' ?>>User list</button></a></li>
+                <li><a href="?page=Login Activity"><button <?= isset($_GET['page']) && $_GET['page'] === 'Login Activity' ? '" class="active"' : '' ?>>Login activity</button></a></li>
+                <li><a href="?page=Admin"><button <?= isset($_GET['page']) && $_GET['page'] === 'Admin' ? '" class="active"' : '' ?>>Admin</button></a></li>
             </ul>
         </div>
         <?php
         $activity = "";
         switch ($page) {
             case 'I-Box Dashboard':
+                $activity .= "I-Box Dashboard";
         ?>
                 <div class="dashboard-container">
                     <div class="dashboard-content">
@@ -118,19 +121,20 @@ if (!is_bool($admin_details_output)) {
                 // activity($activity, $emp_id, $login_time);
                 break;
             case 'Admin List':
+                $activity .= "Admin List";
             ?><div class="dashboard-container">
                     <div class="dashboard-content">
                         <div class="user_table">
                             <table class="user_list">
                                 <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);box-shadow:3px 3px 6px rgb(215, 212, 255);">
-                                    <td style="width: 10%;">EMP ID</td>
-                                    <td style="width: 20%;">NAME</td>
-                                    <td style="width: 20%;">EMAIL</td>
-                                    <td style="width: 10%;">ROLE</td>
-                                    <td style="width: 10%;">MOBILE NO</td>
-                                    <td style="width: 10%;">DOB</td>
-                                    <td style="width: 10%;">JOINED</td>
-                                    <td style="width: 10%;">LAST LOGIN</td>
+                                    <th style="width: 10%;">EMP ID</th>
+                                    <th style="width: 18%;">NAME</th>
+                                    <th style="width: 20%;">EMAIL</th>
+                                    <th style="width: 10%;">ROLE</th>
+                                    <th style="width: 10%;">MOBILE NO</th>
+                                    <th style="width: 10%;">DOB</th>
+                                    <th style="width: 10%;">JOINED</th>
+                                    <th style="width: 12%;">LAST LOGIN</th>
                                 </tr>
                                 <?= admin_details() ?>
                         </div>
@@ -140,22 +144,24 @@ if (!is_bool($admin_details_output)) {
                 activity($activity, $emp_id, $login_time);
                 break;
             case 'User List':
+                $activity .= "User List";
             ?><div class="dashboard-container">
                     <div class="dashboard-content">
                         <table class="user_list">
                             <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);">
-                                <td>NAME</td>
-                                <td>EMAIL</td>
-                                <td>DOB</td>
-                                <td>MOBILE NO</td>
-                                <td>JOINED</td>
-                                <td>LAST LOGIN</td>
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>DOB</th>
+                                <th>MOBILE NO</th>
+                                <th>JOINED</th>
+                                <th>LAST LOGIN</th>
                             </tr>
                         <?php
                         pagination("user_details", "User List", "last_login");
                         // activity($activity, $emp_id, $login_time);
                         break;
                     case 'Login Activity':
+                        // $activity.="I-Box Dashboard";
                         ?>
                             <div class="dashboard-container">
                                 <div class="dashboard-content">
@@ -183,16 +189,17 @@ if (!is_bool($admin_details_output)) {
                                         if (!is_bool($super_admin_output)) {
                                             $super_admin_result = $super_admin_output->fetch_assoc();
                                             if ($password == $super_admin_result['password']) {
+                                                $activity .= "Login activity";
                                         ?>
                                                 <div class="user_table">
                                                     <table class="user_list">
                                                         <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);box-shadow:3px 3px 6px rgb(215, 212, 255);">
-                                                            <td style="width: 10%;">EMP ID</td>
-                                                            <td style="width: 20%;">NAME</td>
-                                                            <td style="width: 20%;">ROLE</td>
-                                                            <td style="width: 30%;">ACTIVITY</td>
-                                                            <td style="width: 10%;">LOGIN TIME</td>
-                                                            <td style="width: 10%;">LOGOUT TIME</td>
+                                                            <th style="width: 10%;">EMP ID</th>
+                                                            <th style="width: 20%;">NAME</th>
+                                                            <th style="width: 20%;">ROLE</th>
+                                                            <th style="width: 30%;">ACTIVITY</th>
+                                                            <th style="width: 10%;">LOGIN TIME</th>
+                                                            <th style="width: 10%;">LOGOUT TIME</th>
                                                         </tr>
                                                         <?php
                                                         login_activity();
@@ -207,6 +214,7 @@ if (!is_bool($admin_details_output)) {
                                     // activity($activity, $emp_id, $login_time);
                                     break;
                                 case 'Admin':
+                                    $activity .= "Admin profile";
                                     ?>
                                     <div class="profile-container">
                                         <div class="profile_picture">
@@ -214,23 +222,7 @@ if (!is_bool($admin_details_output)) {
                                                 <h3>Profile</h3>
                                             </div>
                                             <?php
-                                            require "config.php";
-                                            $user_details_query = "select * from admin_details where token_id='$token_id'";
-                                            $output = $conn->query($user_details_query);
-                                            if (!is_bool($output)) {
-                                                $result = $output->fetch_assoc();
-                                                echo "<div>";
-                                                if ($result['profile_status'] == 0) {
-                                                    $tkn_id = bin2hex($token_id);
-                                                    echo "<a href=\"?page=Admin\">";
-                                                    echo "<img src='Uploads/admin/profile" . $tkn_id . ".jpg'>";
-                                                } else {
-                                                    echo "<a href=\"?page=Admin\">";
-                                                    echo "<img src='Uploads/profiledefault.jpg'>";
-                                                }
-                                                echo "</a>";
-                                                echo "</div>";
-                                            }
+                                            profile_picture($token_id);
                                             ?>
                                         </div>
                                         <?php
@@ -242,6 +234,11 @@ if (!is_bool($admin_details_output)) {
                                             header("location:admin_login.php");
                                         }
                                         if (!isset($_POST['edit'])) {
+                                            $user_details_query = "select * from admin_details where token_id='$token_id';";
+                                            $output = $conn->query($user_details_query);
+                                            if ($output->num_rows > 0) {
+                                                $result = $output->fetch_assoc();
+                                            }
                                         ?>
                                             <div class="user_details">
                                                 <form action="admin_dashboard.php?page=Admin" enctype="multipart/form-data" method="post">
@@ -309,7 +306,7 @@ if (!is_bool($admin_details_output)) {
                                                         move_uploaded_file($file_array['file_tmp_name'], $file_destination);
                                                         $image_query = "update admin_details set profile_status=0 where token_id='{$token_id}'";
                                                         $image_query_output = $conn->query($image_query);
-                                                        // header("location:email.php?page=User");
+                                                        header("location:admin_dashboard.php?page=Admin");
                                                     } else {
                                                         echo "Please upload a picture less than 1mb";
                                                     }
@@ -323,6 +320,10 @@ if (!is_bool($admin_details_output)) {
                                     }
                                     // activity($activity, $emp_id, $login_time);
                                     break;
+                                default:
+                                    header("location:admin_dashboard.php?page=I-Box Dashboard");
+                                    break;
                             }
+                            // echo $activity;
                             // activity($activity, $emp_id, $login_time);
                         ?>

@@ -88,7 +88,8 @@ function mail_list_display($sender_mail, $reciever_mail, $token, $m_no, $subject
 {
     global $bold, $b_end, $bg_color, $color, $result;
 ?>
-    <tr style="<?= $bg_color;$color ?>">
+    <tr class="mail-line" style="<?= $bg_color;
+                $color ?>">
         <td style="width:10%;margin-left:20px;">
             <input type="checkbox" class="archive" name="archive-check[]" value="<?= $result['mail_no'] ?>">
             <input type="checkbox" class="star" name="star-check[]" value="<?= $result['mail_no'] ?>">
@@ -99,13 +100,13 @@ function mail_list_display($sender_mail, $reciever_mail, $token, $m_no, $subject
             </a>
         </td>
         <td style="width:50%;">
-            <a href="email.php?page=Email&token=<?= $token ?>&mailno=<?= $m_no ?>">
+            <a href="email.php?page=Email&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>">
                 <?= $subject ?>
             </a>
         </td>
 
         <td style="width:10%;">
-            <a href="email.php?page=Email&token=<?= $token ?>&mailno=<?= $m_no ?>">
+            <a href="email.php?page=Email&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>">
                 <?= dateconvertion($date) ?>
             </a>
         </td>
