@@ -56,7 +56,7 @@ include 'config.php';
                             $result = $get_query_output->fetch_assoc();
                             if ($result['password'] == $password) {
                                 $_SESSION['token_id'] = bin2hex($result['token_id']);
-                                header("location:email.php?page=Email");
+                                header("location:email.php?page=Email&option=Inbox");
                             } else {
                                 echo "<h6 style=\"text-align: center; color:red;\">Incorrect password</h6>";
                             }
