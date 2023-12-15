@@ -62,7 +62,7 @@ function dateconvertion($numericdate)
     $formattedDate = $date->format("d M ");
     return $formattedDate;
 }
-function row_color($i_status)
+function row_color($i_status, $sent = "")
 {
     global $bg_color, $color, $bold, $b_end;
     static $row = 1;
@@ -72,14 +72,14 @@ function row_color($i_status)
         $bg_color = "background-color:rgb(235, 233, 255);";
     }
     $row++;
-    if ($i_status == "unread") {
-        $bold = "<b>";
-        $b_end = "</b>";
-        $color = "color:black;";
-    } else {
+    if ($i_status == "read") {
         $bold = "";
         $b_end = "";
         $color = "color:grey;";
+    } else {
+        $bold = "<b>";
+        $b_end = "</b>";
+        $color = "color:black;";
     }
 }
 function usermail_as_me($sender_mail, $reciever_mail)
@@ -99,22 +99,22 @@ function mail_list_display($sender_mail, $reciever_mail, $option, $token, $m_no,
     <tr class="mail-line" style="<?= $bg_color;
                                     $color ?>">
         <td style="width:10%;margin-left:20px;">
-            <input type="checkbox" class="archive" name="archive-check[]" value="<?= $result['mail_no'] ?>">
-            <input type="checkbox" <?= $result['starred'] == 'no' ? 'class="star"' : 'class="stared"' ?> name="star-check[]" value="<?= $result['mail_no'] ?>">
+            <input type="checkbox" name="archive-check[]" value="<?= $result['mail_no'] ?>" class="archive">
+            <input type="checkbox" name="star-check[]" value="<?= $result['mail_no'] ?>" <?= $result['starred'] == 'no' ? 'class="star"' : 'class="stared"' ?>>
         </td>
         <td style="width:30%;">
-            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>">
+            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="<?= $color ?>">
                 <?= $bold . usermail_as_me($sender_mail, $reciever_mail) . $b_end ?>
             </a>
         </td>
         <td style="width:50%;">
-            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>">
+            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="<?= $color ?>">
                 <?= $subject ?>
             </a>
         </td>
 
         <td style="width:10%;">
-            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="margin-right:20px;">
+            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="margin-right:20px;<?= $color ?>">
                 <?= dateconvertion($date) ?>
             </a>
         </td>
@@ -129,7 +129,6 @@ function email_options($starred_mail, $archive_mail)
         foreach ($starred_mail as $mail_number) {
             $star_query = "update mail_list set starred='yes' where mail_no='$mail_number';";
             $star_output = $conn->query($star_query);
-            header("location:email.php?page=Email&option=$option");
         }
     } elseif (isset($_POST['archive'])) {
         foreach ($archive_mail as $mail_number) {

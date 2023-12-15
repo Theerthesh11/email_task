@@ -4,7 +4,6 @@
     padding: 0;
     text-decoration: none;
 }
-
 .navigation-bar {
     background-color: white;
     width: 100%;
@@ -72,7 +71,7 @@
 }
 
 .vertical-navigation-bar ul li button:hover {
-    color: rgb(0, 0, 0);
+    /* color: rgb(0, 0, 0); */
     text-align: left;
     padding: 7.5px;
     background-color: rgb(235, 233, 255);
@@ -87,6 +86,10 @@
     background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
     border-radius: 3px;
     box-shadow: 3px 3px 6px rgb(215, 212, 255);
+}
+
+.active:hover {
+    background: linear-gradient(90deg, rgb(106, 89, 255) 41%, rgb(152, 140, 255) 100%);
 }
 
 .email-container {
@@ -129,7 +132,7 @@
 
 .email-options {
     display: grid;
-    grid-template-columns: 88% 12%;
+    grid-template-columns: 90% 18px;
     align-items: center;
 }
 
@@ -155,8 +158,9 @@
 
 .mail-list-options input[type="submit" i] {
     background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
-    width: 80px;
-    margin-right: 15px;
+    width: 90px;
+    margin: 4px 0px;
+    margin-right: 7px;
     height: 30px;
     border: none;
     outline: none;
@@ -166,6 +170,7 @@
 
 .mail-list-options input[type="submit" i]:hover {
     box-shadow: 3px 3px 6px rgb(215, 212, 255);
+    background: linear-gradient(90deg, rgb(106, 89, 255) 41%, rgb(152, 140, 255) 100%);
 }
 
 .mail-list-options input[type="search" i] {
@@ -191,6 +196,7 @@
 .compose-btn a button:hover {
     color: white;
     box-shadow: 3px 3px 6px rgb(215, 212, 255);
+    background: linear-gradient(90deg, rgb(106, 89, 255) 41%, rgb(152, 140, 255) 100%);
 }
 
 .email-options p {
@@ -222,6 +228,11 @@ input[type="reset" i] {
     outline: none;
     border-radius: 3px;
     color: white;
+}
+
+.email_form input[type="submit" i]:hover,
+input[type="reset" i]:hover {
+    background: linear-gradient(90deg, rgb(106, 89, 255) 41%, rgb(152, 140, 255) 100%);
 }
 
 .email_form input[type="text" i] {
@@ -260,9 +271,9 @@ tr {
     height: 35px;
 }
 
-td a {
+/* td a {
     color: black;
-}
+} */
 
 .archive {
     margin-left: 20px;
@@ -404,14 +415,23 @@ input[type="date" i] {
 }
 
 .mail-display {
-    margin: 20px;
-    width: 100%;
+    margin: 9px;
+    width: 111%;
     line-height: 30px;
     font-size: 13px;
+    height: 100vh;
+    overflow-y: scroll;
+}
+
+.mail-display-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 99%;
 }
 
 .mail-display input[type="text" i] {
-    width: 100%;
+    width: 95%;
     height: 30px;
     border-style: solid;
     border-color: grey;
@@ -421,6 +441,10 @@ input[type="date" i] {
     border-color: grey;
 }
 
+.mail-display textarea {
+    width: 95%;
+}
+
 .mail-display label {
     background-color: rgb(235, 233, 255);
     color: rgb(87, 87, 87);
@@ -428,16 +452,20 @@ input[type="date" i] {
     padding: 3px;
 }
 
-.mail-display button {
+.mail-display a,
+input[type="submit"] {
     border-style: solid;
+    border-width: 1.5px;
     border-color: rgb(114, 98, 255);
     background-color: white;
-    margin: 7.5px 0px;
-    width: 80px;
+    margin: 0px 10px 7.5px 0px;
+    /* width: 80px; */
+    padding: 5px 16px;
     height: 30px;
     outline: none;
-    border-radius: 5px;
+    border-radius: 3px;
     color: rgb(114, 98, 255);
+    cursor: pointer;
 }
 
 .dashboard-container {

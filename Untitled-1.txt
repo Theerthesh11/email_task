@@ -1,0 +1,2 @@
+//sent mail
+<?= total_mail("sender_email", "and mail_status='sent') and archived='no'") ?>

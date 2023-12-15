@@ -9,7 +9,6 @@ if (!is_bool($user_details_output)) {
     $user_details_result = $user_details_output->fetch_assoc();
     $email = $user_details_result['email'];
 }
-// $email = "theertheshest@gmail.com";
 $page = isset($_GET['page']) ? $_GET['page'] : 'Email';
 $option = empty($_GET['option']) ? '' : $_GET['option'];
 ?>
@@ -18,9 +17,9 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
 
 <head>
     <meta charset="UTF-8">
-    <!-- <meta http-equiv="refresh" content="10"> -->
+    <!-- <meta http-equiv="refresh" content="1"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Inboxflow</title>
     <link rel="stylesheet" href="email.css">
 </head>
 
@@ -56,7 +55,7 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
             <ul>
                 <br><br>
                 <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>>Dashboard</button></a></li>
-                <li><a href="?page=Email&option=Inbox"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
+                <li><a href="?page=Email"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
                 <li><a href="?page=Chat"><button <?= isset($_GET['page']) && $_GET['page'] === 'Chat' ? '" class="active"' : '' ?>>Chat</button></a></li>
                 <li><a href="?page=User"><button <?= isset($_GET['page']) && $_GET['page'] === 'User' ? '" class="active"' : '' ?>>User</button></a></li>
                 <li><a href="?page=Calender"><button <?= isset($_GET['page']) && $_GET['page'] === 'Calender' ? '" class="active"' : '' ?>>Calender</button></a></li>
@@ -120,7 +119,6 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                             </div>
                             <div><a href="email.php?page=Email&option=Sent"><button <?= isset($_GET['option']) && $_GET['option'] === 'Sent' ? 'class="option_active"' : '' ?>>Sent</button></a></div>
                             <div class="email-count">
-                                <?= total_mail("sender_email", "and mail_status='sent') and archived='no'") ?>
                             </div>
                             <div><a href="email.php?page=Email&option=Draft"><button <?= isset($_GET['option']) && $_GET['option'] === 'Draft' ? 'class="option_active"' : '' ?>>Draft</button></a></div>
                             <div class="email-count">
@@ -128,17 +126,19 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                             </div>
                             <div><a href="email.php?page=Email&option=Starred"><button <?= isset($_GET['option']) && $_GET['option'] === 'Starred' ? 'class="option_active"' : '' ?>>Starred</button></a></div>
                             <div class="email-count">
-                                <?= total_mail("sender_email", "or reciever_email='{$email}') and starred='yes' and mail_status='sent'") ?>
+                                <?= total_mail("sender_email", "or reciever_email='{$email}') and (starred='yes' and mail_status='sent') and inbox_status='unread';") ?>
                             </div>
                             <div><a href="email.php?page=Email&option=Spam"><button <?= isset($_GET['option']) && $_GET['option'] === 'Spam' ? 'class="option_active"' : '' ?>>Spam</button></a></div>
-                            <div class="email-count"></div>
+                            <div class="email-count">
+                                <?= total_mail("reciever_email", "and mail_status='sent') and (spam='yes' and inbox_status='unread');") ?>
+                            </div>
                             <div><a href="email.php?page=Email&option=Archived"><button <?= isset($_GET['option']) && $_GET['option'] === 'Archived' ? 'class="option_active"' : '' ?>>Archive</button></a></div>
                             <div class="email-count">
-                                <?= total_mail("sender_email", "or reciever_email='{$email}') and mail_status='sent' and archived='yes'") ?>
+                                <?= total_mail("sender_email", "or reciever_email='{$email}') and (mail_status='sent' and archived='yes') and inbox_status='unread';") ?>
                             </div>
                             <div><a href="email.php?page=Email&option=Trash"><button <?= isset($_GET['option']) && $_GET['option'] === 'Trash' ? 'class="option_active"' : '' ?>>Trash</button></a></div>
                             <div class="email-count">
-                                <?= trash_mail("mail_no", "reciever_email", "sender_email", "mail_status=\"trash\"") ?>
+                                <?= trash_mail("mail_no", "reciever_email", "sender_email", "(mail_status='trash' and inbox_status='unread');") ?>
                             </div>
                         </div>
                         <hr>
@@ -172,9 +172,9 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                 <div class="mail-list-options">
                                     <div>
                                         <form action="email.php?page=Email&option=<?= $option ?>" method="post">
-                                            <input type="submit" name="<?= name_setting('Starred', 'Unstar', 'Star') ?>" value="<?= name_setting('Starred', 'Unstar', 'Star') ?>">
-                                            <input type="submit" name="<?= name_setting('Archived', 'Unarchive', 'Archive') ?>" value=" <?= name_setting('Archived', 'Unarchive', 'Archive') ?>">
-                                            <input type="submit" name="<?= name_setting('Trash', 'Restore', 'Delete') ?>" value="<?= name_setting('Trash', 'Restore', 'Delete') ?>">
+                                            <input type="submit" name="<?= name_setting('Starred', 'unstar', 'star') ?>" value="<?= name_setting('Starred', 'Unstar', 'Star') ?>">
+                                            <input type="submit" name="<?= name_setting('Archived', 'unarchive', 'archive') ?>" value=" <?= name_setting('Archived', 'Unarchive', 'Archive') ?>">
+                                            <input type="submit" name="<?= name_setting('Trash', 'restore', 'delete') ?>" value="<?= name_setting('Trash', 'Restore', 'Delete') ?>">
                                             <input type="submit" name="mark_as_read" value="Mark as read" style="width: 100px;">
                                     </div>
                                     <div>
@@ -184,7 +184,7 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                 </div>
                             <?php
                         }
-                        require "email_options.php";
+                        include "email_options.php";
                             ?>
                             <div class="mail-list">
                                 <div class="mail-display">
@@ -193,20 +193,22 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                     $token_id = isset($_GET['token']) ? hex2bin($_GET['token']) : "";
                                     $mail_no = isset($_GET['mailno']) ? $_GET['mailno'] : "";
                                     if (!empty($token_id) && !empty($mail_no)) {
-                                    ?><div>
-                                            <form action="email.php?page=Email" method="post">
-                                                <a href="email.php?page=Email&option=<?= $option ?>"><button>Back</button></a>
-                                                <a href=""><button>Reply</button></a>
-                                                <a href=""><button>Forward</button></a>
-                                            </form>
-                                        </div>
-                                        <?php
                                         $select_query = "select * from mail_list where mail_no ='$mail_no' and token_id='$token_id';";
                                         $mark_as_read = "update mail_list set inbox_status=\"read\" where mail_no='{$mail_no}' and token_id='{$token_id}'";
                                         $select_query_output = $conn->query($select_query);
                                         $conn->query($mark_as_read);
                                         $result = $select_query_output->fetch_assoc();
-                                        ?>
+                                    ?>
+                                        <div class="mail-display-options">
+                                            <form action="email.php?page=Email&option=Compose" method="post">
+                                                <div>
+                                                    <a href="email.php?page=Email&option=<?= $option ?>">Back</a>
+                                                </div>
+                                                <div>
+                                                    <input type="submit" name="reply" value="Reply">
+                                                    <input type="submit" name="forward" value="Forward"><br>
+                                                </div>
+                                        </div>
                                         <label>From:</label>
                                         <input type="text" name="sender_email" id="sender_email" value="<?= $result['sender_email'] ?>" readonly>
                                         <br><br>
@@ -227,10 +229,33 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                         ?>
                                         <br>
                                         <textarea name="mail_body" readonly><?= $result['notes'] ?></textarea><br><br>
+
+                                        </form>
                                 </div>
+                            </div>
                             </div>
 
                             </table>
+                        <?php
+                                    }
+                                    if (isset($_POST['reply'])) {
+                                        print_r($_POST);
+                        ?>
+                            <div class="email_form">
+                                <form action="email.php?page=Email&option=Compose" method="post">
+                                    <input type="submit" name="send" value="Send mail">
+                                    <input type="reset" value="Clear"><br><br>
+                                    <label for="mail">TO:</label><br>
+                                    <input type="text" id="mail" name="mail" value=<?= $_POST['reciever_email'] ?> required><br><br>
+                                    <label for="cc" style="margin-right:16px;">CC:</label>
+                                    <input type="text" id="cc" name="cc"><br><br>
+                                    <label for="bcc" style="margin-right:16px;">BCC:</label>
+                                    <input type="text" id="bcc" name="bcc"><br><br>
+                                    <label for="subject">SUBJECT:</label>
+                                    <input type="text" id="subject" name="subject" required><br><br><br>
+                                    <textarea name="notes" placeholder="Type here..."></textarea><br><br>
+                                </form>
+                            </div>
                         <?php
                                     }
                                     break;
@@ -357,9 +382,9 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                             }
             ?>
             </form>
-                            </div>
                     </div>
                 </div>
+    </div>
 </body>
 
 </html>
