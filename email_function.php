@@ -1,5 +1,13 @@
 <?php
-
+function random($length)
+{
+    $result = substr(str_shuffle('1234567890ABCDEF'), 0, $length);
+    return $result;
+}
+function random_byte()
+{
+    return substr(str_shuffle('89AB'), 0, 1);
+}
 function total_mail($column_name, $addition = " ")
 {
     global $email;
@@ -131,10 +139,10 @@ function email_options($starred_mail, $archive_mail)
         }
     }
 }
-function pagination($page, $query, $result)
+function pagination($page, $query, $result, $page_number)
 {
     require "config.php";
-    $results_per_page = 15;
+    $results_per_page = 10;
     $number_of_result = $result->num_rows;
     $number_of_page = ceil($number_of_result / $results_per_page);
     if (!isset($_GET['page_no'])) {
@@ -168,18 +176,18 @@ function pagination($page, $query, $result)
                     <input type="checkbox" name="star-check[]" value="<?= $pagination_result['mail_no'] ?>" <?= $pagination_result['starred'] == 'no' ? 'class="star"' : 'class="stared"' ?>>
                 </td>
                 <td style="width:30%;">
-                    <a href="email.php?page=Email&option=<?= $page ?>&token=<?= bin2hex($pagination_result['token_id']) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
+                    <a href="email.php?page=Email&option=<?= $page ?>&page_no=<?= $page_number ?>&token=<?= urlencode(base64_encode($pagination_result['token_id']))  ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
                         <?= usermail_as_me($pagination_result['sender_email'], $pagination_result['reciever_email']) ?>
                     </a>
                 </td>
                 <td style="width:50%;">
-                    <a href="email.php?page=Email&option=<?= $page ?>&token=<?= bin2hex($pagination_result['token_id']) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
+                    <a href="email.php?page=Email&option=<?= $page ?>&page_no=<?= $page_number ?>&token=<?= urlencode(base64_encode($pagination_result['token_id'])) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
                         <?= $pagination_result['subject'] ?>
                     </a>
                 </td>
 
                 <td style="width:10%;">
-                    <a href="email.php?page=Email&option=<?= $page ?>&token=<?= bin2hex($pagination_result['token_id']) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="margin-right:20px;<?= $color ?>">
+                    <a href="email.php?page=Email&option=<?= $page ?>&page_no=<?= $page_number ?>&token=<?= urlencode(base64_encode($pagination_result['token_id'])) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="margin-right:20px;<?= $color ?>">
                         <?= dateconvertion($pagination_result['date_of_sending']) ?>
                     </a>
                 </td>
@@ -187,10 +195,15 @@ function pagination($page, $query, $result)
 <?php
         }
     }
-    echo '<div class="page_numbers">';
+    echo '<div class="result-page-numbers"><div class="page_numbers">';
     for ($page_no = 1; $page_no <= $number_of_page; $page_no++) {
         echo '<button><a href = "email.php?page=Email&option=' . $page . '&page_no=' . $page_no . '"> ' .  $page_no . ' </a></button>';
     }
     echo "</div><br>";
+    if ($page == "Search") {
+        echo '<div class="results">Search results(' . $result->num_rows . ')</div>';
+    }
+    echo '</div><br>';
 }
+
 ?>

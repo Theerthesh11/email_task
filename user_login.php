@@ -57,6 +57,8 @@ include 'config.php';
                             $result = $get_query_output->fetch_assoc();
                             if (password_verify($password, $result['password'])) {
                                 $_SESSION['token_id'] = bin2hex($result['token_id']);
+                                $last_login = "update user_details set last_login=current_timestamp where token_id='{$_SESSION['token_id']};";
+                                $last_login_update = $conn->query($last_login);
                                 header("location:email.php?page=Email&option=Inbox");
                             } else {
                                 echo "<h6 style=\"text-align: center; color:red;\">Incorrect password</h6>";

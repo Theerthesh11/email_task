@@ -58,6 +58,7 @@
     color: grey;
     text-align: left;
     padding: 7px;
+    list-style: none;
 }
 
 .vertical-navigation-bar ul li button {
@@ -325,18 +326,18 @@ td a {
     color: rgb(82, 82, 82);
 }
 
-.chat-conatiner {
+.chat-container {
     background-color: whitesmoke;
 }
 
-.chat-conatiner .chat-content {
+.chat-container .chat-content {
     background-color: white;
     margin: 20px;
     width: 100%;
     height: 100vh;
 }
 
-.chat-conatiner .chat-content h2 {
+.chat-container .chat-content h2 {
     text-align: center;
 }
 
@@ -651,4 +652,22 @@ input[type="password" i] {
 
 .page_numbers {
     margin: 0px 20px;
+    width: 75%;
+}
+
+.icon {
+    width: 14px;
+    height: 14px;
+    margin: 1px 5px;
+    vertical-align: bottom;
+}
+
+.result-page-numbers {
+    display: flex;
+    flex-direction: row;
+}
+
+.results {
+    margin: 3px;
+    color: grey ;
 }

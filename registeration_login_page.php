@@ -1,5 +1,6 @@
 <?php
 session_start();
+require "email_function.php";
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +27,7 @@ session_start();
                 <h2 style="text-align: center;">GRAM MAIL REGISTER</h2>
                 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
                     <label for="email">Email</label>
-                    <input type="text" name="email" id="email" placeholder=""><br><br>
+                    <input type="email" name="email" id="email" placeholder=""><br><br>
                     <label for="name">Name</label>
                     <input type="text" name="name" id="name" placeholder=""><br><br>
                     <label for="phone_no">Phone number</label>
@@ -43,136 +44,118 @@ session_start();
                         <input type="submit" value="REGISTER" name="register">
                         <input type="reset" value="CLEAR"><br><br>
                     </div>
+
+                    <?php
+                    include 'config.php';
+                    $name = "";
+                    $email = "";
+                    $password = "";
+                    $username = "";
+                    $phone_no = "";
+                    $dob = "";
+                    $created_by = "";
+                    $updated_by = "";
+
+                    if (isset($_POST['register'])) {
+                        if (!empty(($_POST['email']))) {
+                            //validate email
+                            //assigning sanitized and validate email to email variable 
+                            if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)) {
+                                $_SESSION['email'] = $_POST['email'];
+                                echo $_SESSION['email'];
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Enter a valid email</h6>";
+                            }
+                        }
+                        if (!empty($_POST['name'])) {
+                            //validate name
+                            //assigning sanitized and validate name to name variable 
+                            if (preg_match("/^[a-zA-Z ]*$/", $_POST['name'])) {
+                                $name = $_POST['name'];
+                                echo $name;
+                                $created_by = $name;
+                                $updated_by = $name;
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Name is not valid</h6>";
+                            }
+                        }
+                        if (!empty($_POST['phone_no'])) {
+                            //validate phone_no
+                            if (preg_match("/^[0-9]{10}$/", $_POST['phone_no'])) {
+                                $phone_no = $_POST['phone_no'];
+                                echo $phone_no;
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Mobile number is not valid</h6>";
+                            }
+                        }
+                        if (!empty($_POST['username'])) {
+                            //validate username
+                            //assigning sanitized and validate username to username variable 
+                            if (preg_match("/^[a-zA-Z0-9 ]*$/", $_POST['username'])) {
+                                $username = $_POST['username'];
+                                $get_query = "select * from mail_list where username='$username';";
+                                $get_query_output = $conn->query($get_query);
+                                print_r($get_query_output);
+                                echo $username;
+                                // if () {
+                                //     echo "username already exist <br>";
+                                // } else {
+                                //     echo "username is valid <br>";
+                                // }
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Invalid username</h6>";
+                            }
+                        }
+                        if (!empty($_POST['password'])) {
+                            //validate password
+                            //assigning sanitized and validate password to password variable 
+                            if (preg_match("/^[a-zA-Z0-9 ]*$/", $_POST['password'])) {
+                                $password = $_POST['password'];
+                                echo $password;
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Enter a password containing alphanumeric values</h6>";
+                            }
+                        }
+                        if (!empty($_POST['confirm-password'])) {
+                            //validate password
+                            //assigning sanitized and validate password to password variable
+                            if (preg_match("/^[a-zA-Z0-9 ]*$/", $_POST['confirm-password'])) {
+                                if ($password == $_POST['confirm-password']) {
+                                    $hash_password = password_hash($password, PASSWORD_DEFAULT);
+                                    echo $password;
+                                } else {
+                                    echo "<h6 style=\"text-align: center; color:red;\">Password doesn't match</h6>";
+                                }
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Enter a password containing alphanumeric values</h6>";
+                            }
+                        }
+                        if (!empty($_POST['dateofbirth'])) {
+                            if (preg_match("/^\d{4}-\d{2}-\d{2}$/", $_POST['dateofbirth']) && strtotime($_POST['dateofbirth']) !== false) {
+                                $dob = $_POST['dateofbirth'];
+                                $year = substr($dob, 2, 2);
+                                $date = substr($dob, 8, 9);
+                                echo $dob;
+                                $_SESSION['token_id'] = random(8) . $date . random(2) . "4" . random(3) . random_byte() . random(3) . random(14) . $year;
+                                echo $_SESSION['token_id'];
+                            } else {
+                                echo "<h6 style=\"text-align: center; color:red;\">Date of Birth is not valid</h6>";
+                            }
+                        }
+                        $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values('{$_SESSION['token_id']}', '{$_SESSION['email']}', '$name','$dob' ,'$username', '$hash_password', '$phone_no',current_timestamp, '$created_by', current_timestamp, '$updated_by', current_timestamp);";
+                        if ($conn->query($register_query)) {
+                            echo "Registeration successfull</h6>";
+                            sleep(3);
+                            header("location:email.php?page=Email&option=Inbox");
+                        } else {
+                            echo "<h6 style=\"text-align: center; color:red;\">Registeration unsuccessfull</h6>";
+                        }
+                    }
+                    ?>
                 </form>
             </div>
         </div>
     </div>
-    <?php
-    include 'config.php';
-    $name = "";
-    $email = "";
-    $password = "";
-    $username = "";
-    $phone_no = "";
-    $dob = "";
-    $created_by = "";
-    $updated_by = "";
-
-    if (isset($_POST['register'])) {
-        if (!empty(($_POST['email']))) {
-            //validate email
-
-            //assigning sanitized and validate email to email variable 
-            $_SESSION['email'] = $_POST['email'];
-        }
-        if (!empty(($_POST['name']))) {
-            //validate name
-
-            //assigning sanitized and validate name to name variable 
-            $name = $_POST['name'];
-            $created_by = $name;
-            $updated_by = $name;
-        }
-        if (!empty(($_POST['phone_no']))) {
-            //validate phone_no
-
-            //assigning sanitized and validate phone_no to phone_no variable 
-            $phone_no = $_POST['phone_no'];
-        }
-        if (!empty(($_POST['username']))) {
-            //validate username
-
-            //assigning sanitized and validate username to username variable 
-            $username = $_POST['username'];
-            $get_query = "select * from mail_list where username='$username'";
-            $get_query_output = $conn->query($get_query);
-            if ($get_query_output->num_rows > 0) {
-                echo "username already exist <br>";
-            } else {
-                echo "username is valid <br>";
-            }
-        }
-        if (!empty(($_POST['password']))) {
-            //validate password
-
-            //assigning sanitized and validate password to password variable 
-            $password = $_POST['password'];
-        }
-        if (!empty($_POST['confirm-password'])) {
-            //validate password
-
-            //assigning sanitized and validate password to password variable
-            if ($password == $_POST['confirm-password']) {
-                $hash_password = password_hash($password, PASSWORD_DEFAULT);
-            } else {
-                echo "Password doesn't match";
-            }
-        }
-        if (!empty($_POST['dateofbirth'])) {
-            $dob = $_POST['dateofbirth'];
-            // $year = substr($dob, 2, 2);
-            // $month = substr($dob, 5, 2);
-            // switch ($month) {
-            //     case '01':
-            //         $month = 'JAN';
-            //         break;
-            //     case '02':
-            //         $month = 'FEB';
-            //         break;
-            //     case '03':
-            //         $month = 'MAR';
-            //         break;
-            //     case '04':
-            //         $month = 'APR';
-            //         break;
-            //     case '05':
-            //         $month = 'MAY';
-            //         break;
-            //     case '06':
-            //         $month = 'JUN';
-            //         break;
-            //     case '07':
-            //         $month = 'JUL';
-            //         break;
-            //     case '08':
-            //         $month = 'AUG';
-            //         break;
-            //     case '09':
-            //         $month = 'SEP';
-            //         break;
-            //     case '10':
-            //         $month = 'OCT';
-            //         break;
-            //     case '11':
-            //         $month = 'NOV';
-            //         break;
-            //     case '12':
-            //         $month = 'DEC';
-            //         break;
-            // }
-            // $date = substr($dob, 8, 9);
-            function random($length)
-            {
-                $result = substr(str_shuffle('1234567890ABCDEF'), 0, $length);
-                return $result;
-            }
-            function random_byte()
-            {
-                return substr(str_shuffle('89AB'), 0, 1);
-            }
-            $_SESSION['token_id'] = hex2bin(random(8) . $date . random(2) . "4" . random(3) . random_byte() . random(3) . random(14) . $year);
-            // echo $_SESSION['token_id'];
-        }
-        $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values('{$_SESSION['token_id']}', '{$_SESSION['email']}', '$name','$dob' ,'$username', '$hash_password', '$phone_no,current_timestamp, '$created_by', current_timestamp, '$updated_by', current_timestamp);";
-        // $image_query="insert into profile_image(token_id,status,date_of_uploading) values('{$token_id}',1,current_timestamp)";
-        // $conn->query($image_query);
-        if ($conn->query($register_query)) {
-            header("location:email.php?page=Email&option=Inbox");
-        } else {
-            echo "Registeration unsuccessfull";
-        }
-    }
-    ?>
 </body>
 
 </html>
