@@ -62,23 +62,20 @@ function dateconvertion($numericdate)
     $formattedDate = $date->format("d M ");
     return $formattedDate;
 }
-function row_color($i_status, $sent = "")
+function row_color($i_status)
 {
-    global $bg_color, $color, $bold, $b_end;
+    global $bg_color, $color;
     static $row = 1;
     if ($row % 2 == 0) {
-        $bg_color = "background-color:white;";
+        $row++;
+        return $bg_color = "background-color:white;";
     } else {
-        $bg_color = "background-color:rgb(235, 233, 255);";
+        $row++;
+        return $bg_color = "background-color:rgb(235, 233, 255);";
     }
-    $row++;
     if ($i_status == "read") {
-        $bold = "";
-        $b_end = "";
         $color = "color:grey;";
     } else {
-        $bold = "<b>";
-        $b_end = "</b>";
         $color = "color:black;";
     }
 }
@@ -92,35 +89,6 @@ function usermail_as_me($sender_mail, $reciever_mail)
     }
 }
 
-function mail_list_display($sender_mail, $reciever_mail, $option, $token, $m_no, $subject, $date)
-{
-    global $bold, $b_end, $bg_color, $color, $result;
-?>
-    <tr class="mail-line" style="<?= $bg_color;
-                                    $color ?>">
-        <td style="width:10%;margin-left:20px;">
-            <input type="checkbox" name="archive-check[]" value="<?= $result['mail_no'] ?>" class="archive">
-            <input type="checkbox" name="star-check[]" value="<?= $result['mail_no'] ?>" <?= $result['starred'] == 'no' ? 'class="star"' : 'class="stared"' ?>>
-        </td>
-        <td style="width:30%;">
-            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="<?= $color ?>">
-                <?= $bold . usermail_as_me($sender_mail, $reciever_mail) . $b_end ?>
-            </a>
-        </td>
-        <td style="width:50%;">
-            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="<?= $color ?>">
-                <?= $subject ?>
-            </a>
-        </td>
-
-        <td style="width:10%;">
-            <a href="email.php?page=Email&option=<?= $option ?>&token=<?= bin2hex($token) ?>&mailno=<?= $m_no ?>" style="margin-right:20px;<?= $color ?>">
-                <?= dateconvertion($date) ?>
-            </a>
-        </td>
-    </tr>
-<?php
-}
 
 function email_options($starred_mail, $archive_mail)
 {
@@ -129,6 +97,7 @@ function email_options($starred_mail, $archive_mail)
         foreach ($starred_mail as $mail_number) {
             $star_query = "update mail_list set starred='yes' where mail_no='$mail_number';";
             $star_output = $conn->query($star_query);
+            // header("location:email.php?page=Starred");
         }
     } elseif (isset($_POST['archive'])) {
         foreach ($archive_mail as $mail_number) {
@@ -161,5 +130,67 @@ function email_options($starred_mail, $archive_mail)
             $restore_output = $conn->query($restore_query);
         }
     }
+}
+function pagination($page, $query, $result)
+{
+    require "config.php";
+    $results_per_page = 15;
+    $number_of_result = $result->num_rows;
+    $number_of_page = ceil($number_of_result / $results_per_page);
+    if (!isset($_GET['page_no'])) {
+        $page_no = 1;
+    } else {
+        $page_no = $_GET['page_no'];
+    }
+    $page_first_result = ($page_no - 1) * $results_per_page;
+    $pagination_query =  "$query LIMIT " . $page_first_result . ',' . $results_per_page;
+    $pagination_output = $conn->query($pagination_query);
+    if ($pagination_output->num_rows > 0) {
+        while ($pagination_result = $pagination_output->fetch_assoc()) {
+            static $row = 1;
+            if ($row % 2 == 0) {
+                $row++;
+                $bg_color = "background-color:white;";
+            } else {
+                $row++;
+                $bg_color = "background-color:rgb(235, 233, 255);";
+            }
+            if ($pagination_result['inbox_status'] == "read") {
+                $color = "color:grey;";
+            } else {
+                $color = "color:black;";
+            }
+?>
+            <tr class="mail-line" style="<?= $bg_color;
+                                            $color ?>">
+                <td style="width:10%;margin-left:20px;">
+                    <input type="checkbox" name="archive-check[]" value="<?= $pagination_result['mail_no'] ?>" class="archive">
+                    <input type="checkbox" name="star-check[]" value="<?= $pagination_result['mail_no'] ?>" <?= $pagination_result['starred'] == 'no' ? 'class="star"' : 'class="stared"' ?>>
+                </td>
+                <td style="width:30%;">
+                    <a href="email.php?page=Email&option=<?= $page ?>&token=<?= bin2hex($pagination_result['token_id']) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
+                        <?= usermail_as_me($pagination_result['sender_email'], $pagination_result['reciever_email']) ?>
+                    </a>
+                </td>
+                <td style="width:50%;">
+                    <a href="email.php?page=Email&option=<?= $page ?>&token=<?= bin2hex($pagination_result['token_id']) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
+                        <?= $pagination_result['subject'] ?>
+                    </a>
+                </td>
+
+                <td style="width:10%;">
+                    <a href="email.php?page=Email&option=<?= $page ?>&token=<?= bin2hex($pagination_result['token_id']) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="margin-right:20px;<?= $color ?>">
+                        <?= dateconvertion($pagination_result['date_of_sending']) ?>
+                    </a>
+                </td>
+            </tr>
+<?php
+        }
+    }
+    echo '<div class="page_numbers">';
+    for ($page_no = 1; $page_no <= $number_of_page; $page_no++) {
+        echo '<button><a href = "email.php?page=Email&option=' . $page . '&page_no=' . $page_no . '"> ' .  $page_no . ' </a></button>';
+    }
+    echo "</div><br>";
 }
 ?>

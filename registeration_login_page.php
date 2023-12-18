@@ -84,13 +84,13 @@ session_start();
 
             //assigning sanitized and validate username to username variable 
             $username = $_POST['username'];
-            $get_query = "select user_name from mail_list where user_name='{$username}';";
+            $get_query = "select * from mail_list where username='$username'";
             $get_query_output = $conn->query($get_query);
-            // if (!($result = $get_query_output->fetch_assoc()) && is_null($result)) {
-            //     echo "username is valid <br>";
-            // } else {
-            //     echo "username already exist <br>";
-            // }
+            if ($get_query_output->num_rows > 0) {
+                echo "username already exist <br>";
+            } else {
+                echo "username is valid <br>";
+            }
         }
         if (!empty(($_POST['password']))) {
             //validate password
@@ -103,54 +103,54 @@ session_start();
 
             //assigning sanitized and validate password to password variable
             if ($password == $_POST['confirm-password']) {
-                $password = $_POST['password'];
+                $hash_password = password_hash($password, PASSWORD_DEFAULT);
             } else {
                 echo "Password doesn't match";
             }
         }
         if (!empty($_POST['dateofbirth'])) {
             $dob = $_POST['dateofbirth'];
-            $year = substr($dob, 2, 2);
-            $month = substr($dob, 5, 2);
-            switch ($month) {
-                case '01':
-                    $month = 'JAN';
-                    break;
-                case '02':
-                    $month = 'FEB';
-                    break;
-                case '03':
-                    $month = 'MAR';
-                    break;
-                case '04':
-                    $month = 'APR';
-                    break;
-                case '05':
-                    $month = 'MAY';
-                    break;
-                case '06':
-                    $month = 'JUN';
-                    break;
-                case '07':
-                    $month = 'JUL';
-                    break;
-                case '08':
-                    $month = 'AUG';
-                    break;
-                case '09':
-                    $month = 'SEP';
-                    break;
-                case '10':
-                    $month = 'OCT';
-                    break;
-                case '11':
-                    $month = 'NOV';
-                    break;
-                case '12':
-                    $month = 'DEC';
-                    break;
-            }
-            $date = substr($dob, 8, 9);
+            // $year = substr($dob, 2, 2);
+            // $month = substr($dob, 5, 2);
+            // switch ($month) {
+            //     case '01':
+            //         $month = 'JAN';
+            //         break;
+            //     case '02':
+            //         $month = 'FEB';
+            //         break;
+            //     case '03':
+            //         $month = 'MAR';
+            //         break;
+            //     case '04':
+            //         $month = 'APR';
+            //         break;
+            //     case '05':
+            //         $month = 'MAY';
+            //         break;
+            //     case '06':
+            //         $month = 'JUN';
+            //         break;
+            //     case '07':
+            //         $month = 'JUL';
+            //         break;
+            //     case '08':
+            //         $month = 'AUG';
+            //         break;
+            //     case '09':
+            //         $month = 'SEP';
+            //         break;
+            //     case '10':
+            //         $month = 'OCT';
+            //         break;
+            //     case '11':
+            //         $month = 'NOV';
+            //         break;
+            //     case '12':
+            //         $month = 'DEC';
+            //         break;
+            // }
+            // $date = substr($dob, 8, 9);
             function random($length)
             {
                 $result = substr(str_shuffle('1234567890ABCDEF'), 0, $length);
@@ -160,14 +160,14 @@ session_start();
             {
                 return substr(str_shuffle('89AB'), 0, 1);
             }
-            $_SESSION['token_id'] = random(8) . $date . random(2) . "4" . $month . random_byte() . random(3) . random(14) . $year;
-            echo $_SESSION['token_id'];
+            $_SESSION['token_id'] = hex2bin(random(8) . $date . random(2) . "4" . random(3) . random_byte() . random(3) . random(14) . $year);
+            // echo $_SESSION['token_id'];
         }
-        $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no, created_by, created_on, updated_by, updated_on) values('{$_SESSION['token_id']}', '{$_SESSION['email']}', '{$name}','{$dob}' ,'{$username}', '{$password}', '{$phone_no}', '{$created_by}', current_timestamp, '{$updated_by}', current_timestamp);";
-        $image_query="insert into profile_image(token_id,status,date_of_uploading) values('{$token_id}',1,current_timestamp)";
-        $conn->query($image_query);
+        $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values('{$_SESSION['token_id']}', '{$_SESSION['email']}', '$name','$dob' ,'$username', '$hash_password', '$phone_no,current_timestamp, '$created_by', current_timestamp, '$updated_by', current_timestamp);";
+        // $image_query="insert into profile_image(token_id,status,date_of_uploading) values('{$token_id}',1,current_timestamp)";
+        // $conn->query($image_query);
         if ($conn->query($register_query)) {
-            header("location:personaldashboard.php");
+            header("location:email.php?page=Email&option=Inbox");
         } else {
             echo "Registeration unsuccessfull";
         }

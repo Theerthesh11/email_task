@@ -52,7 +52,7 @@ include 'config.php';
                         $password = $_POST['password'];
                         if ($get_query_output->num_rows > 0) {
                             $result = $get_query_output->fetch_assoc();
-                            if ($result['password'] == $password) {
+                            if (password_verify($password, $result['password'])) {
                                 $emp_id = $result['emp_id'];
                                 $name = $result['name'];
                                 $role = $result['role'];

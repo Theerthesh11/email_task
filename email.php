@@ -1,5 +1,7 @@
 <?php
 session_start();
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 include 'config.php';
 include 'email_function.php';
 $token_id = isset($_SESSION['token_id']) ? hex2bin($_SESSION['token_id']) : header("location:user_login.php");
@@ -130,7 +132,7 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                             </div>
                             <div><a href="email.php?page=Email&option=Spam"><button <?= isset($_GET['option']) && $_GET['option'] === 'Spam' ? 'class="option_active"' : '' ?>>Spam</button></a></div>
                             <div class="email-count">
-                                <?= total_mail("reciever_email", "and mail_status='sent') and (spam='yes' and inbox_status='unread');") ?>
+                                <?= total_mail("reciever_email", "and mail_status='sent') and (spam='yes');") ?>
                             </div>
                             <div><a href="email.php?page=Email&option=Archived"><button <?= isset($_GET['option']) && $_GET['option'] === 'Archived' ? 'class="option_active"' : '' ?>>Archive</button></a></div>
                             <div class="email-count">
@@ -148,14 +150,23 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                     ?>
                     <div class="mail-list">
                         <?php
-                        if (isset($_GET['option']) && $_GET['option'] == "Compose") {
+                        if (isset($_GET['option']) && $_GET['option'] == "Compose" || isset($_POST['reply'])) {
                         ?>
                             <div class="email_form">
                                 <form action="email.php?page=Email" method="post">
                                     <input type="submit" name="send" value="Send mail">
                                     <input type="reset" value="Clear"><br><br>
                                     <label for="mail">TO:</label><br>
-                                    <input type="text" id="mail" name="mail" required><br><br>
+                                    <input type="text" id="mail" name="mail" value="<?php
+                                                                                    if (!empty($_POST['sender_email']) && !($_GET['option'] == "Sent")) {
+                                                                                        $result = $_POST['sender_email'];
+                                                                                    } elseif (empty($_POST['receiver_email'])) {
+                                                                                        $result = "";
+                                                                                    } else {
+                                                                                        $result = $_POST['receiver_email'];
+                                                                                    }
+                                                                                    echo $result;
+                                                                                    ?>" required><br><br>
                                     <label for="cc" style="margin-right:16px;">CC:</label>
                                     <input type="text" id="cc" name="cc"><br><br>
                                     <label for="bcc" style="margin-right:16px;">BCC:</label>
@@ -165,7 +176,7 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                     <textarea name="notes" placeholder="Type here..."></textarea><br><br>
                                 </form>
                             </div>
-                            <div class="mail-list-table">
+                            <!-- <div class="mail-list-table"> -->
                             <?php
                         } else {
                             ?>
@@ -186,92 +197,70 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                         }
                         include "email_options.php";
                             ?>
-                            <div class="mail-list">
+                            <?php
+                            include 'config.php';
+                            $token_id = isset($_GET['token']) ? hex2bin($_GET['token']) : "";
+                            $mail_no = isset($_GET['mailno']) ? $_GET['mailno'] : "";
+                            if (!empty($token_id) && !empty($mail_no)) {
+                                $select_query = "select * from mail_list where mail_no ='$mail_no' and token_id='$token_id';";
+                                $mark_as_read = "update mail_list set inbox_status=\"read\" where mail_no='{$mail_no}' and token_id='{$token_id}'";
+                                $select_query_output = $conn->query($select_query);
+                                $conn->query($mark_as_read);
+                                $result = $select_query_output->fetch_assoc();
+                            ?>
                                 <div class="mail-display">
+                                    <div class="mail-display-options">
+                                        <form action="email.php?page=Email&option=Compose" method="post">
+                                            <div>
+                                                <a href="email.php?page=Email&option=<?= $option ?>">Back</a>
+                                            </div>
+                                            <div>
+                                                <input type="submit" name="reply" value="Reply">
+                                                <input type="submit" name="forward" value="Forward"><br>
+                                            </div>
+                                    </div>
+                                    <label>From:</label>
+                                    <input type="text" name="sender_email" id="sender_email" value="<?= $result['sender_email'] ?>" readonly>
+                                    <br><br>
+                                    <label>To:</label>
+                                    <input type="text" name="reciever_email" id="reciever_email" value="<?= $result['reciever_email'] ?>" readonly><br><br>
+                                    <label>Subject:</label>
+                                    <input type="text" name="mail_subject" id="subject" value="<?= $result['subject'] ?>" readonly><br><br>
                                     <?php
-                                    include 'config.php';
-                                    $token_id = isset($_GET['token']) ? hex2bin($_GET['token']) : "";
-                                    $mail_no = isset($_GET['mailno']) ? $_GET['mailno'] : "";
-                                    if (!empty($token_id) && !empty($mail_no)) {
-                                        $select_query = "select * from mail_list where mail_no ='$mail_no' and token_id='$token_id';";
-                                        $mark_as_read = "update mail_list set inbox_status=\"read\" where mail_no='{$mail_no}' and token_id='{$token_id}'";
-                                        $select_query_output = $conn->query($select_query);
-                                        $conn->query($mark_as_read);
-                                        $result = $select_query_output->fetch_assoc();
+                                    if (empty($result['cc']) && empty($result['bcc'])) {
+                                    } else {
                                     ?>
-                                        <div class="mail-display-options">
-                                            <form action="email.php?page=Email&option=Compose" method="post">
-                                                <div>
-                                                    <a href="email.php?page=Email&option=<?= $option ?>">Back</a>
-                                                </div>
-                                                <div>
-                                                    <input type="submit" name="reply" value="Reply">
-                                                    <input type="submit" name="forward" value="Forward"><br>
-                                                </div>
-                                        </div>
-                                        <label>From:</label>
-                                        <input type="text" name="sender_email" id="sender_email" value="<?= $result['sender_email'] ?>" readonly>
-                                        <br><br>
-                                        <label>To:</label>
-                                        <input type="text" name="reciever_email" id="reciever_email" value="<?= $result['reciever_email'] ?>" readonly><br><br>
-                                        <label>Subject:</label>
-                                        <input type="text" name="mail_subject" id="subject" value="<?= $result['subject'] ?>" readonly><br><br>
-                                        <?php
-                                        if (empty($result['cc']) && empty($result['bcc'])) {
-                                        } else {
-                                        ?>
-                                            <label>Cc:</label>
-                                            <input type="text" name="Cc" id="cc" value="<?= $result['cc'] ?>" readonly><br><br>
-                                            <label>Bcc:</label>
-                                            <input type="text" name="Bcc" id="bcc" value="<?= $result['bcc'] ?>" readonly><br><br>
-                                        <?php
-                                        }
-                                        ?>
-                                        <br>
-                                        <textarea name="mail_body" readonly><?= $result['notes'] ?></textarea><br><br>
+                                        <label>Cc:</label>
+                                        <input type="text" name="Cc" id="cc" value="<?= $result['cc'] ?>" readonly><br><br>
+                                        <label>Bcc:</label>
+                                        <input type="text" name="Bcc" id="bcc" value="<?= $result['bcc'] ?>" readonly><br><br>
+                                    <?php
+                                    }
+                                    ?>
+                                    <br>
+                                    <textarea name="mail_body" readonly><?= $result['notes'] ?></textarea><br><br>
 
-                                        </form>
+                                    </form>
                                 </div>
-                            </div>
                             </div>
 
                             </table>
                         <?php
-                                    }
-                                    if (isset($_POST['reply'])) {
-                                        print_r($_POST);
-                        ?>
-                            <div class="email_form">
-                                <form action="email.php?page=Email&option=Compose" method="post">
-                                    <input type="submit" name="send" value="Send mail">
-                                    <input type="reset" value="Clear"><br><br>
-                                    <label for="mail">TO:</label><br>
-                                    <input type="text" id="mail" name="mail" value=<?= $_POST['reciever_email'] ?> required><br><br>
-                                    <label for="cc" style="margin-right:16px;">CC:</label>
-                                    <input type="text" id="cc" name="cc"><br><br>
-                                    <label for="bcc" style="margin-right:16px;">BCC:</label>
-                                    <input type="text" id="bcc" name="bcc"><br><br>
-                                    <label for="subject">SUBJECT:</label>
-                                    <input type="text" id="subject" name="subject" required><br><br><br>
-                                    <textarea name="notes" placeholder="Type here..."></textarea><br><br>
-                                </form>
-                            </div>
-                        <?php
-                                    }
-                                    break;
-                                case 'Chat':
+                            }
+                            break;
+                        case 'Chat':
                         ?>
                         <div class="chat-conatiner">
                             <div class="chat-content">
                                 <?php
-                                    echo "<h2>Chat will be available soon</h2>";
+                                echo "<h2>Chat will be available soon</h2>";
                                 ?>
                             </div>
                         </div>
                     <?php
-                                    break;
+                            break;
 
-                                case 'User':
+                        case 'User':
                     ?>
                         <div class="profile-container">
                             <div class="profile_picture">
@@ -282,7 +271,7 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                             </div>
                             <?php
 
-                                    if (!isset($_POST['edit'])) {
+                            if (!isset($_POST['edit'])) {
                             ?>
                                 <div class="user_details">
                                     <form action="email.php?page=User" enctype="multipart/form-data" method="post">
@@ -301,8 +290,8 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                     </form>
                                 </div>
                             <?php
-                                    }
-                                    if (isset($_POST['edit'])) {
+                            }
+                            if (isset($_POST['edit'])) {
                             ?>
                                 <div class="user_details">
                                     <form action="email.php?page=User" enctype="multipart/form-data" method="post">
@@ -324,50 +313,50 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                                 </div>
                         </div>
                     <?php
-                                    }
+                            }
 
                     ?>
 
                     <?php
-                                    if (isset($_POST['save'])) {
-                                        if (!empty($_POST)) {
-                                            $update_details = "update user_details set username='{$_POST['user_name']}', name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
-                                            $conn->query($update_details);
-                                        }
-                                        if (!empty($_FILES['file'])) {
-                                            $file = $_FILES['file'];
-                                            $file_array = array("file_name" => $file['name'], "file_type" => $file['type'], "file_tmp_name" => $file['tmp_name'], "file_error" => $file['error'], "file_size" => $file['size']);
-                                            $file_ext = explode(".", $file_array["file_name"]);
-                                            $file_actual_ext = strtolower(end($file_ext));
-                                            $allowed_ext = array('jpg', 'jpeg', 'png');
-                                            if (in_array($file_actual_ext, $allowed_ext)) {
-                                                if ($file_array['file_error'] == 0) {
-                                                    if ($file_array['file_size'] < 10000000) {
-                                                        $tkn_id = bin2hex($token_id);
-                                                        $file_new_name = "profile" . $tkn_id . ".jpg";
-                                                        $file_destination = "Uploads/$file_new_name";
-                                                        move_uploaded_file($file_array['file_tmp_name'], $file_destination);
-                                                        $image_query = "update user_details set profile_status=0 where token_id='{$token_id}'";
-                                                        $image_query_output = $conn->query($image_query);
-                                                        header("location:email.php?page=User");
-                                                    } else {
-                                                        echo "Please upload a picture less than 1mb";
-                                                    }
-                                                } else {
-                                                    echo "upload unsuccessfull!";
-                                                }
+                            if (isset($_POST['save'])) {
+                                if (!empty($_POST)) {
+                                    $update_details = "update user_details set username='{$_POST['user_name']}', name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
+                                    $conn->query($update_details);
+                                }
+                                if (!empty($_FILES['file'])) {
+                                    $file = $_FILES['file'];
+                                    $file_array = array("file_name" => $file['name'], "file_type" => $file['type'], "file_tmp_name" => $file['tmp_name'], "file_error" => $file['error'], "file_size" => $file['size']);
+                                    $file_ext = explode(".", $file_array["file_name"]);
+                                    $file_actual_ext = strtolower(end($file_ext));
+                                    $allowed_ext = array('jpg', 'jpeg', 'png');
+                                    if (in_array($file_actual_ext, $allowed_ext)) {
+                                        if ($file_array['file_error'] == 0) {
+                                            if ($file_array['file_size'] < 10000000) {
+                                                $tkn_id = bin2hex($token_id);
+                                                $file_new_name = "profile" . $tkn_id . ".jpg";
+                                                $file_destination = "Uploads/$file_new_name";
+                                                move_uploaded_file($file_array['file_tmp_name'], $file_destination);
+                                                $image_query = "update user_details set profile_status=0 where token_id='{$token_id}'";
+                                                $image_query_output = $conn->query($image_query);
+                                                header("location:email.php?page=User");
                                             } else {
-                                                echo "Image format must be jpg, jpeg, png";
+                                                echo "Please upload a picture less than 1mb";
                                             }
+                                        } else {
+                                            echo "upload unsuccessfull!";
                                         }
+                                    } else {
+                                        echo "Image format must be jpg, jpeg, png";
                                     }
-                                    if (isset($_POST['logout'])) {
-                                        session_unset();
-                                        session_destroy();
-                                        header("location:user_login.php");
-                                    }
-                                    break;
-                                case 'Calender':
+                                }
+                            }
+                            if (isset($_POST['logout'])) {
+                                session_unset();
+                                session_destroy();
+                                header("location:user_login.php");
+                            }
+                            break;
+                        case 'Calender':
                     ?>
                     <div class="dashboard-container">
                         <div class="dashboard-content">
@@ -375,11 +364,11 @@ $option = empty($_GET['option']) ? '' : $_GET['option'];
                         </div>
                     </div>
             <?php
-                                    break;
-                                default:
-                                    header("location:email.php?page=Email");
-                                    break;
-                            }
+                            break;
+                        default:
+                            // header("location:email.php?page=Email");
+                            break;
+                    }
             ?>
             </form>
                     </div>

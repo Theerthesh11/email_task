@@ -52,9 +52,10 @@ include 'config.php';
 
                         //assigning sanitized and validate password to password variable 
                         $password = htmlspecialchars($_POST['password']);
+                        // $hashed_password = password_hash($password, PASSWORD_DEFAULT);
                         if (!is_bool($get_query_output)) {
                             $result = $get_query_output->fetch_assoc();
-                            if ($result['password'] == $password) {
+                            if (password_verify($password, $result['password'])) {
                                 $_SESSION['token_id'] = bin2hex($result['token_id']);
                                 header("location:email.php?page=Email&option=Inbox");
                             } else {
