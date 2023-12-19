@@ -12,11 +12,11 @@ function total_mail($column_name, $addition = " ")
 {
     global $email;
     require "config.php";
-    $count_query = "select count($column_name) from mail_list where ($column_name='{$email}' $addition ;";
+    $count_query = "select count($column_name) from mail_list where ($column_name='$email' $addition ;";
     $count_output = $conn->query($count_query);
-    if (!is_bool($count_output)) {
+    if ($count_output->num_rows > 0) {
         if ($result = $count_output->fetch_assoc()) {
-            if ($result["count($column_name)"] > 0) {
+            if ($result["count($column_name)"]) {
                 echo "<p>" . $result["count($column_name)"] . "</p>";
             } else {
                 return;
@@ -105,7 +105,6 @@ function email_options($starred_mail, $archive_mail)
         foreach ($starred_mail as $mail_number) {
             $star_query = "update mail_list set starred='yes' where mail_no='$mail_number';";
             $star_output = $conn->query($star_query);
-            // header("location:email.php?page=Starred");
         }
     } elseif (isset($_POST['archive'])) {
         foreach ($archive_mail as $mail_number) {
@@ -141,6 +140,7 @@ function email_options($starred_mail, $archive_mail)
 }
 function pagination($page, $query, $result, $page_number)
 {
+    global $email;
     require "config.php";
     $results_per_page = 10;
     $number_of_result = $result->num_rows;
@@ -164,6 +164,8 @@ function pagination($page, $query, $result, $page_number)
                 $bg_color = "background-color:rgb(235, 233, 255);";
             }
             if ($pagination_result['inbox_status'] == "read") {
+                $color = "color:grey;";
+            } elseif ($pagination_result['sender_email'] == $email) {
                 $color = "color:grey;";
             } else {
                 $color = "color:black;";

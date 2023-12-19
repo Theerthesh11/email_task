@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$db="email_db";
+$db="inboxflow_db";
 // Create connection
 $conn =new mysqli($servername, $username, $password,$db);
 // Check connection

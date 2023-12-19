@@ -589,7 +589,7 @@ input[type="password" i] {
 }
 
 .super-admin-login input[type="reset" i] {
-    color: rgb(114, 98, 255);
+    color: rgb(255, 255, 255);
     background-color: white;
     width: 150px;
     margin-right: 10px;

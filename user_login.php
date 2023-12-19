@@ -38,31 +38,36 @@ include 'config.php';
                 if (isset($_POST['login'])) {
                     if (!empty(($_POST['username']))) {
                         //validate username
-
                         //assigning sanitized and validate username to username variable 
-                        $username = $_POST['username'];
-                        $get_query = "select * from user_details where username='{$username}';";
-                        $get_query_output = $conn->query($get_query);
-                        if (is_bool($get_query_output)) {
-                            echo "<h6 style=\"text-align: center; color:red;\">Kindly check if the username is correct</h6>";
+                        if (preg_match("/^[a-zA-Z0-9 ]*$/", $_POST['username'])) {
+                            $username = htmlspecialchars($_POST['username']);
+                            $get_query = "select * from user_details where username='{$username}';";
+                            $get_query_output = $conn->query($get_query);
+                            if ($get_query_output->num_rows == 0) {
+                                echo "<h6 style=\"text-align: center; color:red;\">Kindly check if the username is correct</h6>";
+                            }
+                        } else {
+                            echo "<h6 style=\"text-align: center; color:red;\">Username must be a alphanumeric</h6>";
                         }
                     }
                     if (!empty(($_POST['password']))) {
                         //validate password
-
-                        //assigning sanitized and validate password to password variable 
-                        $password = htmlspecialchars($_POST['password']);
-                        // $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-                        if (!is_bool($get_query_output)) {
-                            $result = $get_query_output->fetch_assoc();
-                            if (password_verify($password, $result['password'])) {
-                                $_SESSION['token_id'] = bin2hex($result['token_id']);
-                                $last_login = "update user_details set last_login=current_timestamp where token_id='{$_SESSION['token_id']};";
-                                $last_login_update = $conn->query($last_login);
-                                header("location:email.php?page=Email&option=Inbox");
-                            } else {
-                                echo "<h6 style=\"text-align: center; color:red;\">Incorrect password</h6>";
+                        //assigning sanitized and validate password to password variable
+                        if (preg_match("/^[a-zA-Z0-9 ]*$/", $_POST['password'])) {;
+                            $password = htmlspecialchars($_POST['password']);
+                            if ($get_query_output->num_rows > 0) {
+                                $result = $get_query_output->fetch_assoc();
+                                if (password_verify($password, $result['password'])) {
+                                    $_SESSION['token_id'] = $result['token_id'];
+                                    $last_login = "update user_details set last_login=current_timestamp where token_id='{$_SESSION['token_id']}';";
+                                    $last_login_update = $conn->query($last_login);
+                                    header("location:email.php?page=Email&option=Inbox");
+                                } else {
+                                    echo "<h6 style=\"text-align: center; color:red;\">Incorrect password</h6>";
+                                }
                             }
+                        } else {
+                            echo "<h6 style=\"text-align: center; color:red;\">password must be a alphanumeric value</h6>";
                         }
                     }
                 }

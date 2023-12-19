@@ -145,7 +145,6 @@ require "email_function.php";
                         $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values('{$_SESSION['token_id']}', '{$_SESSION['email']}', '$name','$dob' ,'$username', '$hash_password', '$phone_no',current_timestamp, '$created_by', current_timestamp, '$updated_by', current_timestamp);";
                         if ($conn->query($register_query)) {
                             echo "Registeration successfull</h6>";
-                            sleep(3);
                             header("location:email.php?page=Email&option=Inbox");
                         } else {
                             echo "<h6 style=\"text-align: center; color:red;\">Registeration unsuccessfull</h6>";

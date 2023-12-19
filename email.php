@@ -4,9 +4,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 0);
 include 'config.php';
 include 'email_function.php';
-$token_id = isset($_SESSION['token_id']) ? hex2bin($_SESSION['token_id']) : header("location:user_login.php");
+$token_id = isset($_SESSION['token_id']) ? $_SESSION['token_id'] : header("location:user_login.php");
 $user_details_query = "select * from user_details where token_id='$token_id';";
-// echo $token_id;
 $user_details_output = $conn->query($user_details_query);
 if (!is_bool($user_details_output)) {
     $user_details_result = $user_details_output->fetch_assoc();
@@ -25,8 +24,6 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inboxflow</title>
     <link rel="stylesheet" href="email.css">
-    <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"> -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.18.0/font/bootstrap-icons.css">
 </head>
 
 <body>
@@ -60,7 +57,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
         <div class="vertical-navigation-bar">
             <ul>
                 <br><br>
-                <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>><img class="icon" src="icons/dashboard.png" alt="">Dashboard</button></a></li>
+                <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>>Dashboard</button></a></li>
                 <li><a href="?page=Email"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
                 <li><a href="?page=Chat"><button <?= isset($_GET['page']) && $_GET['page'] === 'Chat' ? '" class="active"' : '' ?>>Chat</button></a></li>
                 <li><a href="?page=User"><button <?= isset($_GET['page']) && $_GET['page'] === 'User' ? '" class="active"' : '' ?>>User</button></a></li>
@@ -68,9 +65,6 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
             </ul>
         </div>
         <?php
-        $get_user_details = "select * from user_details where token_id='$token_id';";
-        $output = $conn->query($get_user_details);
-        $result = $output->fetch_assoc();
         switch ($page) {
             case 'Dashboard':
         ?>
@@ -87,15 +81,15 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             </div>
                             <div class="dashboard-count3">
                                 <h3>First login</h3>
-                                <?= dateconvertion($result['created_on']) ?>
+                                <?= dateconvertion($user_details_result['created_on']) ?>
                             </div>
                             <div class="dashboard-count4">
                                 <h3>Last login</h3>
-                                <?= dateconvertion($result['last_login']) ?>
+                                <?= dateconvertion($user_details_result['last_login']) ?>
                             </div>
                             <div class="dashboard-count5">
                                 <h3>Last profile update</h3>
-                                <?= dateconvertion($result['updated_on']) ?>
+                                <?= dateconvertion($user_details_result['updated_on']) ?>
                             </div>
                         </div>
                     </div>
@@ -112,7 +106,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                         </div>
                         <div class="email-options">
                             <div>
-                                <a href="email.php?page=Email&option=Inbox"><button <?= isset($_GET['option']) && $_GET['option'] === 'Inbox' ? 'class="option_active"' : '' ?>><i class="bi bi-inboxes"></i>Inbox</button></a>
+                                <a href="email.php?page=Email&option=Inbox&page_no=<?= $page_no ?>"><button <?= isset($_GET['option']) && $_GET['option'] === 'Inbox' ? 'class="option_active"' : '' ?>><i class="bi bi-inboxes"></i>Inbox</button></a>
                             </div>
                             <div class="email-count">
                                 <?= total_mail("reciever_email", "and mail_status='sent') and (archived='no' and inbox_status='unread');") ?>
@@ -184,18 +178,15 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                         ?>
                             <div class="mail-list-options">
                                 <div>
-                                    <form action="email.php?page=Email&option=<?= $option ?>" method="post">
+                                    <form action="email.php?page=Email&option=<?= $option ?>&page_no=<?= $page_no ?>" method="post">
                                         <input type="submit" name="<?= name_setting('Starred', 'unstar', 'star') ?>" value="<?= name_setting('Starred', 'Unstar', 'Star') ?>">
                                         <input type="submit" name="<?= name_setting('Archived', 'unarchive', 'archive') ?>" value=" <?= name_setting('Archived', 'Unarchive', 'Archive') ?>">
                                         <input type="submit" name="<?= name_setting('Trash', 'restore', 'delete') ?>" value="<?= name_setting('Trash', 'Restore', 'Delete') ?>">
                                         <input type="submit" name="mark_as_read" value="Mark as read" style="width: 100px;">
-                                    </form>
                                 </div>
                                 <div>
-                                    <form action="email.php?page=Email&option=Search" method="post">
-                                        <input type="search" name="search" placeholder="search mail">
-                                        <input type="submit" name="search-btn" value="Search">
-                                    </form>
+                                    <input type="search" name="search" placeholder="search mail">
+                                    <input type="submit" name="search-btn" value="Search">
                                 </div><br><br>
                             </div>
                         <?php
@@ -284,15 +275,15 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                 <input type="submit" name="edit" value="Edit">
                                 <input type="submit" name="logout" value="Log out"><br><br>
                                 <label for="username">Username</label>
-                                <input type="text" id="username" name="user_name" value="<?= $result['username'] ?>" readonly><br><br>
+                                <input type="text" id="username" name="user_name" value="<?= $user_details_result['username'] ?>" readonly><br><br>
                                 <label for="name">Name</label>
-                                <input type="text" id="name" name="name" value="<?= $result['name'] ?>" readonly><br><br>
+                                <input type="text" id="name" name="name" value="<?= $user_details_result['name'] ?>" readonly><br><br>
                                 <label for="dob">Date of birth</label>
-                                <input type="text" id="dob" name="dob" value="<?= $result['date_of_birth'] ?>" readonly><br><br>
+                                <input type="text" id="dob" name="dob" value="<?= $user_details_result['date_of_birth'] ?>" readonly><br><br>
                                 <label for="email">Email</label>
-                                <input type="text" id="email" name="email" value="<?= $result['email'] ?>" readonly><br><br>
+                                <input type="text" id="email" name="email" value="<?= $user_details_result['email'] ?>" readonly><br><br>
                                 <label for="cell_number">Mobile number</label>
-                                <input type="text" id="cell_number" name="cell_number" value="<?= $result['phone_no'] ?>" readonly><br><br>
+                                <input type="text" id="cell_number" name="cell_number" value="<?= $user_details_result['phone_no'] ?>" readonly><br><br>
                             </form>
                         </div>
                     <?php
@@ -306,15 +297,15 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                     picture</label>
                                 <input type="submit" name="save" value="Save"><br><br>
                                 <label for="username">Username</label>
-                                <input type="text" id="username" name="user_name" value="<?= $result['username'] ?>" readonly><br><br>
+                                <input type="text" id="username" name="user_name" value="<?= $user_details_result['username'] ?>" readonly><br><br>
                                 <label for="name">Name</label>
-                                <input type="text" id="name" name="name" value="<?= $result['name'] ?>"><br><br>
+                                <input type="text" id="name" name="name" value="<?= $user_details_result['name'] ?>"><br><br>
                                 <label for="dob">Date of birth</label>
-                                <input type="date" id="dob" name="dob" value="<?= $result['date_of_birth'] ?>"><br><br>
+                                <input type="date" id="dob" name="dob" value="<?= $user_details_result['date_of_birth'] ?>"><br><br>
                                 <label for="email">Email</label>
-                                <input type="text" id="email" name="email" value="<?= $result['email'] ?>" readonly><br><br>
+                                <input type="text" id="email" name="email" value="<?= $user_details_result['email'] ?>" readonly><br><br>
                                 <label for="cell_number">Mobile number</label>
-                                <input type="text" id="cell_number" name="cell_number" value="<?= $result['phone_no'] ?>"><br><br>
+                                <input type="text" id="cell_number" name="cell_number" value="<?= $user_details_result['phone_no'] ?>"><br><br>
                             </form>
                         </div>
                 </div>

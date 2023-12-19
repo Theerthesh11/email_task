@@ -119,17 +119,21 @@ if (isset($_POST['send'])) {
             }
             $cc = !empty($_POST['cc']) ? $_POST['cc'] : "";
             $bcc = !empty($_POST['bcc']) ? $_POST['bcc'] : "";
-            // $headers = 'Cc:' . $cc . "\r\n";
-            // $headers .= 'Bcc:' . $bcc . "\r\n";
+            $headers = "MIME-Version: 1.0" . "\r\n";
+            $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+            if (!empty($cc) && !empty($bcc)) {
+                $headers = 'Cc:' . $cc . "\r\n";
+                $headers .= 'Bcc:' . $bcc . "\r\n";
+            }
             $updated_by = $user_details_result['username'];
             $created_by = $user_details_result['username'];
-            if (mail($to_mail, $subject, $notes)) {
+            if (mail($to_mail, $subject, $notes, $headers)) {
                 $mail_status = "sent";
                 $mail_no = strtoupper(substr($user_details_result['username'], 0, 2)) . random(5);
                 echo "<div class=\"alert-message\"><p style=\" color:green;\"> Mail sent successfully</p></div>";
             } else {
                 $mail_status = "draft";
-                $mail_no = "TH078";
+                $mail_no = strtoupper(substr($user_details_result['username'], 0, 2)) . random(5);
                 echo "<div class=\"alert-message\"><p style=\" color:red;\">mail not sent</p></div>";
             }
             $insert_query = $conn->prepare("insert into mail_list ( token_id, mail_no, sender_email, name, reciever_email, cc, bcc, subject, notes, date_of_sending, mail_status, spam,updated_by, created_by, updated_on) values(?,?,?,?,?,?,?,?,?,current_timestamp,?,?,?,?,current_timestamp)");

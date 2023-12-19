@@ -6,9 +6,8 @@ if (!is_bool($output)) {
     $result = $output->fetch_assoc();
     echo "<div>";
     if ($result['profile_status'] == 0) {
-        $tkn_id = bin2hex($token_id);
         echo "<a href=\"?page=User\">";
-        echo "<img src='Uploads/user_profiles/profile" . $tkn_id . ".jpg'>";
+        echo "<img src='Uploads/user_profiles/profile" . $token_id . ".jpg'>";
     } else {
         echo "<a href=\"?page=User\">";
         echo "<img src='Uploads/profiledefault.jpg'>";
@@ -26,11 +25,10 @@ if (isset($_POST['save'])) {
         if (in_array($file_actual_ext, $allowed_ext)) {
             if ($file_array['file_error'] == 0) {
                 if ($file_array['file_size'] < 10000000) {
-                    $tkn_id = bin2hex($token_id);
-                    $file_new_name = "profile" . $tkn_id . ".jpg";
+                    $file_new_name = "profile" . $token_id . ".jpg";
                     $file_destination = "Uploads/user_profiles/$file_new_name";
                     move_uploaded_file($file_array['file_tmp_name'], $file_destination);
-                    $image_query = "update user_details set profile_status=0 where token_id='{$token_id}'";
+                    $image_query = "update user_details set profile_status=0 where token_id='$token_id'";
                     $image_query_output = $conn->query($image_query);
                     header("location:email.php?page=User");
                 } else {
@@ -40,7 +38,7 @@ if (isset($_POST['save'])) {
                 echo "upload unsuccessfull!";
             }
         } else {
-            echo "Image format must be jpg, jpeg, png";
+            // echo "Image format must be jpg, jpeg, png";
         }
     }
 }
