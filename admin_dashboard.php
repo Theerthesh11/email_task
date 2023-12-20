@@ -43,7 +43,7 @@ if ($admin_details_output->num_rows > 0) {
                 </a>
             </div>
             <div class="profile">
-                <?php require "profile_picture.php"?>
+                <?php require "profile_picture.php" ?>
             </div>
         </div>
     </div>
@@ -75,14 +75,16 @@ if ($admin_details_output->num_rows > 0) {
                                 <?= total_ibox_mail() ?>
                             </div>
                             <div class="dashboard-count2">
-                                <a href="admin_dashboard.php?page=User List">
+                                <a href="admin_dashboard.php?page=User List" style="display: block;padding: 10px 25px 40px 25px;margin: -10px;color:black">
                                     <h3>Total Users</h3>
                                     <?= total_users() ?>
                                 </a>
                             </div>
                             <div class="dashboard-count3">
-                                <h3>Total Admins</h3>
-                                <?= total_admins() ?>
+                                <a href="admin_dashboard.php?page=Admin List" style="display: block;padding: 10px 25px 40px 25px;margin: -10px;color:black">
+                                    <h3>Total Admins</h3>
+                                    <?= total_admins() ?>
+                                </a>
                             </div>
                         </div>
                         <div class="report">
@@ -94,12 +96,16 @@ if ($admin_details_output->num_rows > 0) {
                                 <?= total_ibox_mail("where MONTH(date_of_sending)=" . date('m')) ?>
                             </div>
                             <div class="dashboard-count2">
-                                <h3>Total Users</h3>
-                                <?= total_users("where MONTH(created_on)=" . date('m')) ?>
+                                <a href="admin_dashboard.php?page=User List" style="display: block;padding: 10px 25px 40px 25px;margin: -10px;color:black">
+                                    <h3>Total Users</h3>
+                                    <?= total_users("where MONTH(created_on)=" . date('m')) ?>
+                                </a>
                             </div>
                             <div class="dashboard-count3">
-                                <h3>Total Admins</h3>
-                                <?= total_admins("where MONTH(created_on)=" . date('m')) ?>
+                                <a href="admin_dashboard.php?page=Admin List" style="display: block;padding: 10px 25px 40px 25px;margin: -10px;color:black">
+                                    <h3>Total Admins</h3>
+                                    <?= total_admins("where MONTH(created_on)=" . date('m')) ?>
+                                </a>
                             </div>
                         </div>
                         <div class="report">
@@ -146,7 +152,7 @@ if ($admin_details_output->num_rows > 0) {
                     </div>
                 </div>
             <?php
-                activity($activity, $emp_id, $login_time);
+                // activity($activity, $emp_id, $login_time);
                 break;
             case 'User List':
                 $activity .= "User List";
@@ -160,7 +166,9 @@ if ($admin_details_output->num_rows > 0) {
                                 <th>MOBILE NO</th>
                                 <th>JOINED</th>
                                 <th>LAST LOGIN</th>
-                                <?php if (isset($_POST['view_count'])) { ?>
+                                <?php
+                                if (!empty($_GET['view_count'])) {
+                                ?>
                                     <th>SENT</th>
                                     <th>RECIEVED</th>
                                 <?php
@@ -206,7 +214,7 @@ if ($admin_details_output->num_rows > 0) {
                                                 <table class="user_list">
                                                     <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);box-shadow:3px 3px 6px rgb(215, 212, 255);">
                                                         <th style="width: 10%;">EMP ID</th>
-                                                        <th style="width: 20%;">NAME</th>
+                                                        <th style="width: 20%;">USERNAME</th>
                                                         <th style="width: 20%;">ROLE</th>
                                                         <th style="width: 30%;">ACTIVITY</th>
                                                         <th style="width: 10%;">LOGIN TIME</th>

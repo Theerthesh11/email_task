@@ -60,13 +60,14 @@ include 'config.php';
                                 $result = $get_query_output->fetch_assoc();
                                 if (password_verify($password, $result['password'])) {
                                     $emp_id = $result['emp_id'];
+                                    $username=$result['username'];
                                     $name = $result['name'];
                                     $role = $result['role'];
                                     $_SESSION['token_id'] = $result['token_id'];
                                     $activity = "";
                                     date_default_timezone_set('Asia/Kolkata');
                                     $login_time = date('y-m-d H:i:s');
-                                    $activity_insert_query = "insert into login_activity (emp_id,name,role, activity, login_time) values('$emp_id','$name','$role','$activity','$login_time')";
+                                    $activity_insert_query = "insert into login_activity (emp_id,username,name,role, activity, login_time) values('$emp_id','$username','$name','$role','$activity','$login_time')";
                                     $activity_insert_output = $conn->query($activity_insert_query);
                                     $login_update_query = "update admin_details set last_login=current_timestamp;";
                                     $login_update_output = $conn->query($login_update_query);

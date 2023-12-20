@@ -64,7 +64,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
             <td style="width:11%;text-align:center"><?= $user_details_result['phone_no'] ?></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['created_on'] ?></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['last_login'] ?></td>
-            <?php if (isset($_POST['view_count'])) {
+            <?php if (!empty($_GET['view_count'])) {
             ?>
                 <td style="width: 5%;text-align:center"><?= total_mail("sender_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
                 <td style="width: 9%;text-align:center"><?= total_mail("reciever_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
@@ -73,7 +73,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
             } else {
     ?>
         <td style="width:14%;text-align:center">
-            <form action="admin_dashboard.php?page=User List" method="post"><input type="submit" name="view_count" value="View count"></form>
+            <button><a href="admin_dashboard.php?page=User List&view_count=<?=$user_details_result['token_id']?>">View count</a></button>
         </td>
     <?php
             }
@@ -132,7 +132,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
     ?>
         <tr style="<?= $bg_color; ?>">
             <td><?= $login_activity_result['emp_id'] ?></td>
-            <td><?= $login_activity_result['name'] ?></td>
+            <td><?= $login_activity_result['username'] ?></td>
             <td><?= $login_activity_result['role'] ?></td>
             <td><?= $login_activity_result['activity'] ?></td>
             <td><?= $login_activity_result['login_time'] ?></td>

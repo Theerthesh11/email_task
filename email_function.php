@@ -8,6 +8,22 @@ function random_byte()
 {
     return substr(str_shuffle('89AB'), 0, 1);
 }
+
+function recipient_name($to_mail)
+{
+    require 'config.php';
+    $fetch_name_query = "select name from user_details where email='$to_mail';";
+    $fetch_name_output = $conn->query($fetch_name_query);
+    if ($fetch_name_output->num_rows > 0) {
+        $fetch_name_result = $fetch_name_output->fetch_assoc();
+        return $fetch_name_result['name'];
+    } else {
+        $name_find = strpos($to_mail, "@");
+        $find_string = substr($to_mail, 0, $name_find);
+        $reciever_name = preg_replace('/[0-9]+/', '', $find_string);
+        return ucfirst($reciever_name);
+    }
+}
 function total_mail($column_name, $addition = " ")
 {
     global $email;
@@ -87,13 +103,14 @@ function row_color($i_status)
         $color = "color:black;";
     }
 }
-function usermail_as_me($sender_mail, $reciever_mail)
+function usermail_as_me($sender_mail, $reciever_mail, $sender_username, $reciever_username)
 {
-    global $email, $result;
+    global $email;
+    // $fetch_username_query = "select * from mail_list where mail_no='';";
     if ($sender_mail == $email) {
-        echo "me, " . $result['name'];
+        echo "me, " . $reciever_username;
     } elseif ($reciever_mail == $email) {
-        echo $result['name'] . ", me";
+        echo $sender_username . ", me";
     }
 }
 
@@ -174,12 +191,12 @@ function pagination($page, $query, $result, $page_number)
             <tr class="mail-line" style="<?= $bg_color;
                                             $color ?>">
                 <td style="width:10%;margin-left:20px;">
-                    <input type="checkbox" name="archive-check[]" value="<?= $pagination_result['mail_no'] ?>" class="archive">
+                    <input type="checkbox" name="check[]" value="<?= $pagination_result['mail_no'] ?>" class="archive">
                     <input type="checkbox" name="star-check[]" value="<?= $pagination_result['mail_no'] ?>" <?= $pagination_result['starred'] == 'no' ? 'class="star"' : 'class="stared"' ?>>
                 </td>
                 <td style="width:30%;">
                     <a href="email.php?page=Email&option=<?= $page ?>&page_no=<?= $page_number ?>&token=<?= urlencode(base64_encode($pagination_result['token_id']))  ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
-                        <?= usermail_as_me($pagination_result['sender_email'], $pagination_result['reciever_email']) ?>
+                        <?= usermail_as_me($pagination_result['sender_email'], $pagination_result['reciever_email'], $pagination_result['sender_name'], $pagination_result['reciever_name']) ?>
                     </a>
                 </td>
                 <td style="width:50%;">
