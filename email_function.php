@@ -115,7 +115,7 @@ function usermail_as_me($sender_mail, $reciever_mail, $sender_username, $recieve
 }
 
 
-function email_options($starred_mail, $archive_mail)
+function email_options($starred_mail, $checkbox_value)
 {
     require "config.php";
     if (isset($_POST['star'])) {
@@ -124,22 +124,22 @@ function email_options($starred_mail, $archive_mail)
             $star_output = $conn->query($star_query);
         }
     } elseif (isset($_POST['archive'])) {
-        foreach ($archive_mail as $mail_number) {
+        foreach ($checkbox_value as $mail_number) {
             $archive_query = "update mail_list set archived='yes' where mail_no='$mail_number';";
             $archive_output = $conn->query($archive_query);
         }
-    } elseif (isset($_POST['delete'])) {
-        foreach ($archive_mail as $mail_number) {
-            $delete_query = "update mail_list set mail_status='trash' where mail_no='$mail_number';";
-            $delete_output = $conn->query($delete_query);
+    } elseif (isset($_POST['trash'])) {
+        foreach ($checkbox_value as $mail_number) {
+            $trash_query = "update mail_list set mail_status='trash' where mail_no='$mail_number';";
+            $trash_output = $conn->query($trash_query);
         }
     } elseif (isset($_POST['mark_as_read'])) {
-        foreach ($archive_mail as $mail_number) {
+        foreach ($checkbox_value as $mail_number) {
             $mark_as_read_query = "update mail_list set inbox_status='read' where mail_no='$mail_number';";
             $mark_as_read_output = $conn->query($mark_as_read_query);
         }
     } elseif (isset($_POST['unarchive'])) {
-        foreach ($archive_mail as $mail_number) {
+        foreach ($checkbox_value as $mail_number) {
             $unarchive_query = "update mail_list set archived='no' where mail_no='$mail_number';";
             $unarchive_query_output = $conn->query($unarchive_query);
         }
@@ -149,9 +149,14 @@ function email_options($starred_mail, $archive_mail)
             $unstar_output = $conn->query($unstar_query);
         }
     } elseif (isset($_POST['restore'])) {
-        foreach ($archive_mail as $mail_number) {
+        foreach ($checkbox_value as $mail_number) {
             $restore_query = "update mail_list set mail_status='sent' where mail_no='$mail_number'";
             $restore_output = $conn->query($restore_query);
+        }
+    } elseif (isset($_POST['delete'])) {
+        foreach ($checkbox_value as $mail_number) {
+            $delete_query = "update mail_list set mail_status='delete' where mail_no='$mail_number'";
+            $delete_output = $conn->query($delete_query);
         }
     }
 }

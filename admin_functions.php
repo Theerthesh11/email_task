@@ -73,7 +73,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
             } else {
     ?>
         <td style="width:14%;text-align:center">
-            <button><a href="admin_dashboard.php?page=User List&view_count=<?=$user_details_result['token_id']?>">View count</a></button>
+            <button><a href="admin_dashboard.php?page=User List&view_count=<?= $user_details_result['token_id'] ?>">View count</a></button>
         </td>
     <?php
             }
@@ -184,5 +184,24 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
             }
         } else {
             return;
+        }
+    }
+
+    function admin()
+    {
+        require "config.php";
+        $admin_details_query = "select emp_id,username,name  from admin_details";
+        $admin_details_output = $conn->query($admin_details_query);
+        if ($admin_details_output->num_rows > 0) {
+            while ($admin_details_result = $admin_details_output->fetch_assoc()) {
+                echo '<tr style="text-align:center;"><td>' . $admin_details_result['emp_id'] . '</td>';
+                echo "<td>" . $admin_details_result['username'] . "</td>";
+                echo "<td>" . $admin_details_result['name'] . "</td>";
+                echo '<td><input type="checkbox" name="ibox_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
+                echo '<td><input type="checkbox" name="admin_list_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
+                echo '<td><input type="checkbox" name="user_list_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
+                echo '<td><input type="checkbox" name="login_activity_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
+                echo '<td><input type="checkbox" name="access_page_access[]" value="' . $$admin_details_result['token_id'] . '"></td></tr>';
+            }
         }
     }

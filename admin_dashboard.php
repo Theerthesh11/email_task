@@ -56,6 +56,7 @@ if ($admin_details_output->num_rows > 0) {
                 <li><a href="?page=User List"><button <?= isset($_GET['page']) && $_GET['page'] === 'User List' ? '" class="active"' : '' ?>>User list</button></a></li>
                 <li><a href="?page=Login Activity"><button <?= isset($_GET['page']) && $_GET['page'] === 'Login Activity' ? '" class="active"' : '' ?>>Login activity</button></a></li>
                 <li><a href="?page=Admin"><button <?= isset($_GET['page']) && $_GET['page'] === 'Admin' ? '" class="active"' : '' ?>>Admin</button></a></li>
+                <li><a href="?page=Access"><button <?= isset($_GET['page']) && $_GET['page'] === 'Access' ? '" class="active"' : '' ?>>Access</button></a></li>
             </ul>
         </div>
         <?php
@@ -304,7 +305,7 @@ if ($admin_details_output->num_rows > 0) {
 
                             ?>
 
-                    <?php
+                            <?php
                                 if (isset($_POST['save'])) {
                                     if (!empty($_POST)) {
                                         $update_details = "update admin_details set name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
@@ -339,8 +340,41 @@ if ($admin_details_output->num_rows > 0) {
                                 }
                                 // activity($activity, $emp_id, $login_time);
                                 break;
-                            default:
-                                header("location:admin_dashboard.php?page=I-Box Dashboard");
+                            case 'Access':
+                            ?>
+                            <div class="access-container">
+                                <div class="access-content">
+                                    <form action="admin_dashboard.php?page=Access" method="post">
+                                        <div class="access-options">
+                                            <div class="search">
+                                                <input type="search" name="search" placeholder="search mail">
+                                                <input type="submit" name="search" value="Search">
+                                            </div>
+                                            <div class="grant-access">
+                                                <input type="submit" name="grant_access" value="Grant Access">
+                                            </div>
+                                        </div>
+                                        <table>
+                                            <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);box-shadow:3px 3px 6px rgb(215, 212, 255);">
+                                                <th>EMP ID</th>
+                                                <th>USERNAME</th>
+                                                <th>NAME</th>
+                                                <th>IBOX DASHBOARD</th>
+                                                <th>ADMIN LIST</th>
+                                                <th>USER LIST</th>
+                                                <th>LOGIN ACTIVITY</th>
+                                                <th>ACCESS PAGE </th>
+                                            </tr>
+                                            <?= admin() ?>
+
+                                        </table>
+                                    </form>
+                                </div>
+                            </div>
+                    <?php
+                    if(isset($_POST['grant_access'])){
+                        print_r($_POST);
+                    }
                                 break;
                         }
                         // echo $activity;

@@ -171,9 +171,11 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             if (isset($_GET['option']) && $_GET['option'] == "Compose" || isset($_POST['reply'])) {
                             ?>
                                 <div class="email_form">
-                                    <form action="email.php?page=Email" method="post">
+                                    <form action="email.php?page=Email" enctype="multipart/form-data" method="post">
                                         <input type="submit" name="send" value="Send mail">
-                                        <input type="reset" value="Clear"><br><br>
+                                        <input type="reset" value="Clear">
+                                        <input type="file" name="file" id="attachment" style="display: none;">
+                                        <label for="attachment" style="color:rgb(114, 98, 255)">Attach</label><br><br>
                                         <label for="mail">TO:</label><br>
                                         <input type="text" id="mail" name="mail" value="<?php
                                                                                         if (!empty($_POST['sender_email']) && !($_GET['option'] == "Sent")) {
@@ -203,8 +205,9 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                         <form action="email.php?page=Email&option=<?= $option ?>&page_no=<?= $page_no ?>" method="post">
                                             <input type="submit" name="<?= name_setting('Starred', 'unstar', 'star') ?>" value="<?= name_setting('Starred', 'Unstar', 'Star') ?>">
                                             <input type="submit" name="<?= name_setting('Archived', 'unarchive', 'archive') ?>" value=" <?= name_setting('Archived', 'Unarchive', 'Archive') ?>">
-                                            <input type="submit" name="<?= name_setting('Trash', 'restore', 'delete') ?>" value="<?= name_setting('Trash', 'Restore', 'Delete') ?>">
+                                            <input type="submit" name="<?= name_setting('Trash', 'restore', 'trash') ?>" value="<?= name_setting('Trash', 'Restore', 'Trash') ?>">
                                             <input type="submit" name="mark_as_read" value="Mark as read" style="width: 100px;">
+                                            <?php require "delete_permission.php"; ?>
                                     </div>
                                     <div>
                                         <input type="search" name="search" placeholder="search mail">
