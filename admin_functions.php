@@ -137,7 +137,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
             <td><?= $login_activity_result['activity'] ?></td>
             <td><?= $login_activity_result['login_time'] ?></td>
             <td><?= $login_activity_result['logout_time'] ?></td>
-<?php
+        <?php
                 $row++;
             }
         }
@@ -190,18 +190,22 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
     function admin()
     {
         require "config.php";
-        $admin_details_query = "select emp_id,username,name  from admin_details";
+        $admin_details_query = "select * from admin_details where role='admin';";
         $admin_details_output = $conn->query($admin_details_query);
         if ($admin_details_output->num_rows > 0) {
             while ($admin_details_result = $admin_details_output->fetch_assoc()) {
-                echo '<tr style="text-align:center;"><td>' . $admin_details_result['emp_id'] . '</td>';
-                echo "<td>" . $admin_details_result['username'] . "</td>";
-                echo "<td>" . $admin_details_result['name'] . "</td>";
-                echo '<td><input type="checkbox" name="ibox_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
-                echo '<td><input type="checkbox" name="admin_list_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
-                echo '<td><input type="checkbox" name="user_list_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
-                echo '<td><input type="checkbox" name="login_activity_access[]" value="' . $$admin_details_result['token_id'] . '"></td>';
-                echo '<td><input type="checkbox" name="access_page_access[]" value="' . $$admin_details_result['token_id'] . '"></td></tr>';
+        ?>
+        <tr style="text-align:center;">
+            <td><?= $admin_details_result['emp_id'] ?></td>
+            <td><?= $admin_details_result['username'] ?></td>
+            <td><?= $admin_details_result['name'] ?></td>
+            <td><input type="checkbox" name="ibox_access[]" value="<?= $admin_details_result['token_id'] ?>"></td>
+            <td><input type="checkbox" name="admin_list_access[]" value="<?= $admin_details_result['token_id'] ?>"></td>
+            <td><input type="checkbox" name="user_list_access[]" value="<?= $admin_details_result['token_id'] ?>"></td>
+            <td><input type="checkbox" name="login_activity_access[]" value="<?= $admin_details_result['token_id'] ?>"></td>
+            <td><input type="checkbox" name="access_page_access[]" value="<?= $admin_details_result['token_id'] ?>"></td>
+        </tr>
+<?php
             }
         }
     }

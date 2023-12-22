@@ -669,42 +669,49 @@ input[type="password" i] {
 
 .results {
     margin: 3px;
-    color: grey ;
+    color: grey;
 }
 
-.access-container{
+.access-container {
     background-color: whitesmoke;
 }
-.access-content{
+
+.access-content {
     margin: 20px;
     padding: 20px;
     background-color: white;
     height: 100vh;
 }
-.access-options{
+
+.access-options {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     margin-bottom: 10px;
 }
 
-.access-options .search input[type="search" i]{
+.access-options .search input[type="search" i] {
     height: 30px;
     padding: 5px;
     border-color: grey;
     border-radius: 3px;
     border-width: 1px;
 }
-.access-options input[type="submit" i]{
+
+.access-options input[type="submit" i] {
     background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
     color: white;
     border-radius: 4px;
     border: none;
+    margin: 0px 0px 7.5px 10px;
     /* width: 130px; */
 }
 
-.access-options input[type="submit" i]:hover{
+.access-options input[type="submit" i]:hover {
     box-shadow: 3px 3px 6px rgb(215, 212, 255);
     background: linear-gradient(90deg, rgb(106, 89, 255) 41%, rgb(152, 140, 255) 100%);
 }
 
+.access-table tr:nth-child(odd) {
+    background-color: rgb(235, 233, 255);
+}

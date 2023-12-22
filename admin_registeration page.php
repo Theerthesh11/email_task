@@ -180,15 +180,15 @@ session_start();
             {
                 return substr(str_shuffle('89AB'), 0, 1);
             }
-            $_SESSION['token_id'] = hex2bin(random(8) . $date . random(2) . "4" . random(3) . random_byte() . random(3) . random(14) . $year);
-            // echo $_SESSION['token_id'];
+            $_SESSION['token_id'] = random(8) . $date . random(2) . "4" . random(3) . random_byte() . random(3) . random(14) . $year;
+            echo $_SESSION['token_id'];
         }
-        $register_query = "insert into admin_details (token_id, emp_id, email, role, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values(unhex({$_SESSION['token_id']}), '$emp_id', '{$_SESSION['email']}','$role','$name','$dob' ,'$username', '$password', '$phone_no',current_timestamp ,'$created_by', current_timestamp, '$updated_by', current_timestamp);";
-        if ($conn->query($register_query)) {
-            header("location:admin_dashboard.php");
-        } else {
-            echo "Registeration unsuccessfull";
-        }
+            $register_query = "insert into admin_details (token_id, emp_id, email, role, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values(unhex({$_SESSION['token_id']}), '$emp_id', '{$_SESSION['email']}','$role','$name','$dob' ,'$username', '$password', '$phone_no',current_timestamp ,'$created_by', current_timestamp, '$updated_by', current_timestamp);";
+            if ($conn->query($register_query)) {
+                header("location:admin_dashboard.php");
+            } else {
+                echo "Registeration unsuccessfull";
+            }
     }
 
     ?>
