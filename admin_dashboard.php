@@ -39,7 +39,7 @@ if ($admin_details_output->num_rows > 0) {
                 <?php
                 $page = isset($_GET['page']) ? $_GET['page'] : 'I-Box Dashboard';
                 ?>
-                <a href="admin_dashboard.php?page=<?=$_GET['page']?>" style="color:rgb(114, 98, 255);">
+                <a href="admin_dashboard.php?page=<?= $_GET['page'] ?>" style="color:rgb(114, 98, 255);">
                     <?= $page ?>
                 </a>
             </div>
@@ -150,20 +150,27 @@ if ($admin_details_output->num_rows > 0) {
                     <?php
                         if ($admin_details['admin_list'] == 1) {
                     ?>
-                        <div class="user_table">
-                            <table class="user_list">
-                                <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);box-shadow:3px 3px 6px rgb(215, 212, 255);">
-                                    <th style="width: 10%;">EMP ID</th>
-                                    <th style="width: 18%;">NAME</th>
-                                    <th style="width: 20%;">EMAIL</th>
-                                    <th style="width: 10%;">ROLE</th>
-                                    <th style="width: 10%;">MOBILE NO</th>
-                                    <th style="width: 10%;">DOB</th>
-                                    <th style="width: 10%;">JOINED</th>
-                                    <th style="width: 12%;">LAST LOGIN</th>
-                                </tr>
-                                <?= admin_details() ?>
-                        </div>
+                        <form action="admin_dashboard.php?page=Admin List&page_no=<?= $_GET['page_no'] ?>" method="post">
+                            <div class="access-options">
+                                <div class="search">
+                                    <input type="search" name="search" placeholder="abc@gmail.com">
+                                    <input type="submit" name="search-btn" value="Search">
+                                </div>
+                            </div>
+                            <div class="user_table">
+                                <table class="user_list">
+                                    <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);box-shadow:3px 3px 6px rgb(215, 212, 255);">
+                                        <th style="width: 10%;">EMP ID</th>
+                                        <th style="width: 18%;">NAME</th>
+                                        <th style="width: 20%;">EMAIL</th>
+                                        <th style="width: 10%;">ROLE</th>
+                                        <th style="width: 10%;">MOBILE NO</th>
+                                        <th style="width: 10%;">DOB</th>
+                                        <th style="width: 10%;">JOINED</th>
+                                        <th style="width: 12%;">LAST LOGIN</th>
+                                    </tr>
+                                    <?= admin_details() ?>
+                            </div>
                 </div>
             </div>
         <?php
@@ -184,42 +191,62 @@ if ($admin_details_output->num_rows > 0) {
                 <?php
                         if ($admin_details['user_list'] == 1) {
                 ?>
-                    <table class="user_list">
-                        <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);">
-                            <th>NAME</th>
-                            <th>EMAIL</th>
-                            <th>DOB</th>
-                            <th>MOBILE NO</th>
-                            <th>JOINED</th>
-                            <th>LAST LOGIN</th>
-                            <?php
-                            if (!empty($_GET['view_count'])) {
-                            ?>
-                                <th>SENT</th>
-                                <th>RECIEVED</th>
-                            <?php
+                    <form action="admin_dashboard.php?page=User List&page_no=<?= $_GET['page_no'] ?>" method="post">
+                        <div class="access-options">
+                            <div class="search">
+                                <input type="search" name="search" placeholder="abc@gmail.com">
+                                <input type="submit" name="search-btn" value="Search">
+                            </div>
+                            <div class="grant-access">
+                                <input type="submit" name="grant_delete_access" value="Grant Access">
+                                <input type="submit" name="block_delete_access" value="Block Access"><br><br>
+                            </div>
+                        </div>
+                        <table class="user_list">
+                            <tr style="text-align: center;color:white; background:hsla(246, 100%, 73%, 1);">
+                                <th>NAME</th>
+                                <th>EMAIL</th>
+                                <th>DELETE</th>
+                                <th>DOB</th>
+                                <th>MOBILE NO</th>
+                                <th>JOINED</th>
+                                <th>LAST LOGIN</th>
+                                <?php
+                                if (!empty($_GET['view_count'])) {
+                                ?>
+                                    <th>SENT</th>
+                                    <th>RECIEVED</th>
+                                <?php
+                                } else {
+                                ?><th>Sent/Recieved</th>
+                            </tr>
+                        <?php
+                                }
+                                pagination_admin_activity("user_details", "User List", "last_login");
                             } else {
-                            ?><th>Sent/Recieved</th>
-                        </tr>
-                    <?php
-                            }
-                            pagination_admin_activity("user_details", "User List", "last_login");
-                        } else {
-                    ?>
+                        ?>
+                    </form>
                     <div class="restricted-access">
                         <h3>Access restricted</h3>
                         <img src="lock.jpg" alt="lock">
                     </div>
                 <?php
-                        }
-                        break;
-                    case 'Login Activity':
-                        // $activity.="I-Box Dashboard";
+                            }
+                            if (isset($_POST['grant_delete_access'])) {
+                                $grant_access_query = "update user_details set trash_delete='yes' where token_id='{$_POST['delete_access']}';";
+                                $grant_access_output = $conn->query($grant_access_query);
+                            } elseif (isset($_POST['block_delete_access'])) {
+                                $block_access_query = "update user_details set trash_delete='no' where token_id='{$_POST['delete_access']}';";
+                                $block_access_output = $conn->query($block_access_query);
+                            }
+                            break;
+                        case 'Login Activity':
+                            // $activity.="I-Box Dashboard";
                 ?>
                 <div class="dashboard-container">
                     <div class="dashboard-content">
                         <?php
-                        if (!isset($_POST['login'])) {
+                            if (!isset($_POST['login'])) {
                         ?><div class="super-admin-login">
                                 <h4>Super Admin Login</h4>
                                 <form action="admin_dashboard.php?page=Login Activity" method="post">
@@ -232,16 +259,16 @@ if ($admin_details_output->num_rows > 0) {
                                 </form>
                             </div>
                             <?php
-                        }
-                        if (isset($_POST['login'])) {
-                            require "config.php";
-                            $username = !empty($_POST['username']) ? $_POST['username'] : "";
-                            $password = !empty($_POST['password']) ? $_POST['password'] : "";
-                            $super_admin_details = "select username,password from admin_details where role='superadmin' and username='$username';";
-                            $super_admin_output = $conn->query($super_admin_details);
-                            if ($super_admin_output->num_rows > 0) {
-                                $super_admin_result = $super_admin_output->fetch_assoc();
-                                if (password_verify($password, $super_admin_result['password'])) {
+                            }
+                            if (isset($_POST['login'])) {
+                                require "config.php";
+                                $username = !empty($_POST['username']) ? $_POST['username'] : "";
+                                $password = !empty($_POST['password']) ? $_POST['password'] : "";
+                                $super_admin_details = "select username,password from admin_details where role='superadmin' and username='$username';";
+                                $super_admin_output = $conn->query($super_admin_details);
+                                if ($super_admin_output->num_rows > 0) {
+                                    $super_admin_result = $super_admin_output->fetch_assoc();
+                                    if (password_verify($password, $super_admin_result['password'])) {
                             ?>
                                     <div class="user_table">
                                         <table class="user_list">
@@ -260,20 +287,20 @@ if ($admin_details_output->num_rows > 0) {
                                     </div>
                         <?php
 
+                                    } else {
+                                        echo "wrong password";
+                                    }
                                 } else {
-                                    echo "wrong password";
-                                }
-                            } else {
-                                echo ' <div class="restricted-access">
+                                    echo ' <div class="restricted-access">
                         <h3>Access restricted</h3>
                         <img src="lock.jpg" alt="lock">
                     </div>';
+                                }
                             }
-                        }
-                        // activity($activity, $emp_id, $login_time);
-                        break;
-                    case 'Admin':
-                        $activity .= "Admin profile";
+                            // activity($activity, $emp_id, $login_time);
+                            break;
+                        case 'Admin':
+                            $activity .= "Admin profile";
                         ?>
                         <div class="profile-container">
                             <div class="profile_picture">
@@ -346,41 +373,41 @@ if ($admin_details_output->num_rows > 0) {
                     ?>
 
                     <?php
-                        if (isset($_POST['save'])) {
-                            if (!empty($_POST)) {
-                                $update_details = "update admin_details set name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
-                                $conn->query($update_details);
-                            }
-                            if (!empty($_FILES['file'])) {
-                                $file = $_FILES['file'];
-                                $file_array = array("file_name" => $file['name'], "file_type" => $file['type'], "file_tmp_name" => $file['tmp_name'], "file_error" => $file['error'], "file_size" => $file['size']);
-                                $file_ext = explode(".", $file_array["file_name"]);
-                                $file_actual_ext = strtolower(end($file_ext));
-                                $allowed_ext = array('jpg', 'jpeg', 'png');
-                                if (in_array($file_actual_ext, $allowed_ext)) {
-                                    if ($file_array['file_error'] == 0) {
-                                        if ($file_array['file_size'] < 10000000) {
-                                            $tkn_id = bin2hex($token_id);
-                                            $file_new_name = "profile" . $tkn_id . ".jpg";
-                                            $file_destination = "Uploads/admin/$file_new_name";
-                                            move_uploaded_file($file_array['file_tmp_name'], $file_destination);
-                                            $image_query = "update admin_details set profile_status=0 where token_id='{$token_id}'";
-                                            $image_query_output = $conn->query($image_query);
-                                            header("location:admin_dashboard.php?page=Admin");
+                            if (isset($_POST['save'])) {
+                                if (!empty($_POST)) {
+                                    $update_details = "update admin_details set name='{$_POST['name']}', date_of_birth='{$_POST['dob']}', phone_no='{$_POST['cell_number']}', updated_on = current_timestamp where email='{$result['email']}';";
+                                    $conn->query($update_details);
+                                }
+                                if (!empty($_FILES['file'])) {
+                                    $file = $_FILES['file'];
+                                    $file_array = array("file_name" => $file['name'], "file_type" => $file['type'], "file_tmp_name" => $file['tmp_name'], "file_error" => $file['error'], "file_size" => $file['size']);
+                                    $file_ext = explode(".", $file_array["file_name"]);
+                                    $file_actual_ext = strtolower(end($file_ext));
+                                    $allowed_ext = array('jpg', 'jpeg', 'png');
+                                    if (in_array($file_actual_ext, $allowed_ext)) {
+                                        if ($file_array['file_error'] == 0) {
+                                            if ($file_array['file_size'] < 10000000) {
+                                                $tkn_id = bin2hex($token_id);
+                                                $file_new_name = "profile" . $tkn_id . ".jpg";
+                                                $file_destination = "Uploads/admin/$file_new_name";
+                                                move_uploaded_file($file_array['file_tmp_name'], $file_destination);
+                                                $image_query = "update admin_details set profile_status=0 where token_id='{$token_id}'";
+                                                $image_query_output = $conn->query($image_query);
+                                                header("location:admin_dashboard.php?page=Admin");
+                                            } else {
+                                                echo "Please upload a picture less than 1mb";
+                                            }
                                         } else {
-                                            echo "Please upload a picture less than 1mb";
+                                            echo "upload unsuccessfull!";
                                         }
                                     } else {
-                                        echo "upload unsuccessfull!";
+                                        echo "Image format must be jpg, jpeg, png";
                                     }
-                                } else {
-                                    echo "Image format must be jpg, jpeg, png";
                                 }
                             }
-                        }
-                        // activity($activity, $emp_id, $login_time);
-                        break;
-                    case 'Access':
+                            // activity($activity, $emp_id, $login_time);
+                            break;
+                        case 'Access':
                     ?>
                     <div class="access-container">
                         <div class="access-content">
@@ -390,7 +417,7 @@ if ($admin_details_output->num_rows > 0) {
                                 <form action="admin_dashboard.php?page=Access" method="post">
                                     <div class="access-options">
                                         <div class="search">
-                                            <input type="search" name="search" placeholder="search mail">
+                                            <input type="search" name="search" placeholder="EST001">
                                             <input type="submit" name="search-btn" value="Search">
                                         </div>
                                         <div class="grant-access">
@@ -426,89 +453,89 @@ if ($admin_details_output->num_rows > 0) {
                         </div>
                     </div>
             <?php
-                        //grant access submit function
-                        if (isset($_POST['grant_access'])) {
-                            //checks for ticked checkbox and assigns the value
-                            $ibox_access = isset($_POST['ibox_access']) ? $_POST['ibox_access'] : array();
-                            $admin_list_access = isset($_POST['admin_list_access']) ? $_POST['admin_list_access'] : array();
-                            $user_list_access = isset($_POST['user_list_access']) ? $_POST['user_list_access'] : array();
-                            $login_activity_access = isset($_POST['login_activity_access']) ? $_POST['login_activity_access'] : array();
-                            $access_page_access = isset($_POST['access_page_access']) ? $_POST['access_page_access'] : array();
-                            if (!empty($ibox_access)) {
-                                foreach ($ibox_access as $token) {
-                                    $access_update_query = "update admin_details set ibox_dashboard=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
+                            //grant access submit function
+                            if (isset($_POST['grant_access'])) {
+                                //checks for ticked checkbox and assigns the value
+                                $ibox_access = isset($_POST['ibox_access']) ? $_POST['ibox_access'] : array();
+                                $admin_list_access = isset($_POST['admin_list_access']) ? $_POST['admin_list_access'] : array();
+                                $user_list_access = isset($_POST['user_list_access']) ? $_POST['user_list_access'] : array();
+                                $login_activity_access = isset($_POST['login_activity_access']) ? $_POST['login_activity_access'] : array();
+                                $access_page_access = isset($_POST['access_page_access']) ? $_POST['access_page_access'] : array();
+                                if (!empty($ibox_access)) {
+                                    foreach ($ibox_access as $token) {
+                                        $access_update_query = "update admin_details set ibox_dashboard=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($admin_list_access)) {
+                                    foreach ($admin_list_access as $token) {
+                                        $access_update_query = "update admin_details set admin_list=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($user_list_access)) {
+                                    foreach ($user_list_access as $token) {
+                                        $access_update_query = "update admin_details set user_list=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($login_activity_access)) {
+                                    foreach ($login_activity_access as $token) {
+                                        $access_update_query = "update admin_details set login_activity=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($access_page_access)) {
+                                    foreach ($access_page_access as $token) {
+                                        $access_update_query = "update admin_details set access_page=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
                                 }
                             }
-                            if (!empty($admin_list_access)) {
-                                foreach ($admin_list_access as $token) {
-                                    $access_update_query = "update admin_details set admin_list=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
+                            if (isset($_POST['restrict_access'])) {
+                                //
+                                $ibox_access = isset($_POST['ibox_access']) ? $_POST['ibox_access'] : array();
+                                $admin_list_access = isset($_POST['admin_list_access']) ? $_POST['admin_list_access'] : array();
+                                $user_list_access = isset($_POST['user_list_access']) ? $_POST['user_list_access'] : array();
+                                $login_activity_access = isset($_POST['login_activity_access']) ? $_POST['login_activity_access'] : array();
+                                $access_page_access = isset($_POST['access_page_access']) ? $_POST['access_page_access'] : array();
+                                if (!empty($ibox_access)) {
+                                    foreach ($ibox_access as $token) {
+                                        $access_update_query = "update admin_details set ibox_dashboard=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($admin_list_access)) {
+                                    foreach ($admin_list_access as $token) {
+                                        $access_update_query = "update admin_details set admin_list=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($user_list_access)) {
+                                    foreach ($user_list_access as $token) {
+                                        $access_update_query = "update admin_details set user_list=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($login_activity_access)) {
+                                    foreach ($login_activity_access as $token) {
+                                        $access_update_query = "update admin_details set login_activity=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
+                                }
+                                if (!empty($access_page_access)) {
+                                    foreach ($access_page_access as $token) {
+                                        $access_update_query = "update admin_details set access_page=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
+                                        $access_update_output = $conn->query($access_update_query);
+                                    }
                                 }
                             }
-                            if (!empty($user_list_access)) {
-                                foreach ($user_list_access as $token) {
-                                    $access_update_query = "update admin_details set user_list=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                            if (!empty($login_activity_access)) {
-                                foreach ($login_activity_access as $token) {
-                                    $access_update_query = "update admin_details set login_activity=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                            if (!empty($access_page_access)) {
-                                foreach ($access_page_access as $token) {
-                                    $access_update_query = "update admin_details set access_page=1, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                        }
-                        if (isset($_POST['restrict_access'])) {
-                            //
-                            $ibox_access = isset($_POST['ibox_access']) ? $_POST['ibox_access'] : array();
-                            $admin_list_access = isset($_POST['admin_list_access']) ? $_POST['admin_list_access'] : array();
-                            $user_list_access = isset($_POST['user_list_access']) ? $_POST['user_list_access'] : array();
-                            $login_activity_access = isset($_POST['login_activity_access']) ? $_POST['login_activity_access'] : array();
-                            $access_page_access = isset($_POST['access_page_access']) ? $_POST['access_page_access'] : array();
-                            if (!empty($ibox_access)) {
-                                foreach ($ibox_access as $token) {
-                                    $access_update_query = "update admin_details set ibox_dashboard=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                            if (!empty($admin_list_access)) {
-                                foreach ($admin_list_access as $token) {
-                                    $access_update_query = "update admin_details set admin_list=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                            if (!empty($user_list_access)) {
-                                foreach ($user_list_access as $token) {
-                                    $access_update_query = "update admin_details set user_list=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                            if (!empty($login_activity_access)) {
-                                foreach ($login_activity_access as $token) {
-                                    $access_update_query = "update admin_details set login_activity=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                            if (!empty($access_page_access)) {
-                                foreach ($access_page_access as $token) {
-                                    $access_update_query = "update admin_details set access_page=0, access_given_by='{$admin_details['username']}' where token_id='$token';";
-                                    $access_update_output = $conn->query($access_update_query);
-                                }
-                            }
-                        }
-                        // if(isset($_POST['search-btn'])){
-                        //     $search_content=!empty($_POST['search'])?$_POST['search']:"";
-                        //     $search_query="select * from admin_details where "
-                        // }
-                        break;
-                }
-                // echo $activity;
-                // activity($activity, $emp_id, $login_time);
+                            // if(isset($_POST['search-btn'])){
+                            //     $search_content=!empty($_POST['search'])?$_POST['search']:"";
+                            //     $search_query="select * from admin_details where "
+                            // }
+                            break;
+                    }
+                    // echo $activity;
+                    // activity($activity, $emp_id, $login_time);
             ?>

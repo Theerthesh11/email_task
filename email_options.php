@@ -3,7 +3,7 @@ $starred_mail = !empty($_POST['star-check']) ? $_POST['star-check'] : array();
 $checkbox_value = !empty($_POST['check']) ? $_POST['check'] : array();
 if (isset($_GET['option']) && !isset($_POST['reply'])) {
     if ($_GET['option'] == "Inbox" && !isset($_GET['token'])) {
-        $inbox_query = "select * from mail_list where (reciever_email='{$email}' and mail_status='sent') and archived='no'";
+        $inbox_query = "select * from mail_list where (reciever_email='{$email}' and mail_status='sent') and (archived='no' and spam='no')";
         $inbox_output = $conn->query($inbox_query);
         if ($inbox_output->num_rows > 0) {
             echo "<div class=\"table-container\"><table>";
@@ -128,18 +128,28 @@ if (isset($_POST['send'])) {
             $body .= "Content-Type: text/plain; charset=iso-8859-1\r\n";
             $body .= "Content-Transfer-Encoding: 7bit\r\n\r\n";
             $body .= $notes . "\r\n";
+            $attachment_path=null;
+            $attachment_name="";
+            if (!empty($_FILES['file']['name'])) {
+                print_r($_FILES);
+                $uploadFolder = 'Attachments/' . $token_id . '/';
+                if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
+                    $tmpName = $_FILES['file']['tmp_name'];
+                    $fileName = $_FILES['file']['name'];
+                    move_uploaded_file($tmpName, $uploadFolder . $fileName);
+                }
+                // Add the attachment part
+                // $attachment_name = $_FILES['file']['name'];
+                $attachment_path = $uploadFolder . $fileName;
+                $file_contents = file_get_contents($attachment_path);
+                $encoded_attachment = chunk_split(base64_encode($file_contents));
 
-            // Add the attachment part
-            $attachment_name = $_FILES['file']['name'];
-            $attachment_path = "Uploads/attachments/". $attachment_name;
-            $file_contents = file_get_contents($attachment_path);
-            $encoded_attachment = chunk_split(base64_encode($file_contents));
-
-            $body .= "--boundary\r\n";
-            $body .= "Content-Type: application/octet-stream; name=\"" . $attachment_name . "\"\r\n";
-            $body .= "Content-Transfer-Encoding: base64\r\n";
-            $body .= "Content-Disposition: attachment; filename=\"" . $attachment_name . "\"\r\n\r\n";
-            $body .= $encoded_attachment . "\r\n";
+                $body .= "--boundary\r\n";
+                $body .= "Content-Type: application/octet-stream; name=\"" . $fileName . "\"\r\n";
+                $body .= "Content-Transfer-Encoding: base64\r\n";
+                $body .= "Content-Disposition: attachment; filename=\"" . $fileName . "\"\r\n\r\n";
+                $body .= $encoded_attachment . "\r\n";
+            }
 
             // End the boundary
             $body .= "--boundary--";
@@ -158,8 +168,8 @@ if (isset($_POST['send'])) {
                 $mail_no = strtoupper(substr($user_details_result['username'], 0, 2)) . random(5);
                 echo "<div class=\"alert-message\"><p style=\" color:red;\">mail not sent</p></div>";
             }
-            $insert_query = $conn->prepare("insert into mail_list ( token_id, mail_no, sender_email,sender_name, reciever_email,reciever_name, cc, bcc, subject, notes, date_of_sending, mail_status, spam,updated_by, created_by, updated_on) values(?,?,?,?,?,?,?,?,?,?,current_timestamp,?,?,?,?,current_timestamp)");
-            $insert_query->bind_param("ssssssssssssss", $token_id, $mail_no, $email, $user_details_result['name'], $to_mail, $recipient_name, $cc, $bcc, $subject, $notes, $mail_status, $spam, $created_by, $updated_by);
+            $insert_query = $conn->prepare("insert into mail_list ( token_id, mail_no, sender_email,sender_name, reciever_email,reciever_name, cc, bcc, subject, notes,attachment_name,attachment_path, date_of_sending, mail_status, spam,updated_by, created_by, updated_on) values(?,?,?,?,?,?,?,?,?,?,?,?,current_timestamp,?,?,?,?,current_timestamp)");
+            $insert_query->bind_param("ssssssssssssssss", $token_id, $mail_no, $email, $user_details_result['name'], $to_mail, $recipient_name, $cc, $bcc, $subject, $notes, $fileName, $attachment_path, $mail_status, $spam, $created_by, $updated_by);
             $insert_query->execute();
         } else {
             echo "<div class=\"alert-message\"><p style=\" color:red;\">Enter a valid email id</p></div>";

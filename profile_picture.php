@@ -2,12 +2,12 @@
 require_once "config.php";
 $user_details_query = "select * from user_details where token_id='$token_id'";
 $output = $conn->query($user_details_query);
-if (!is_bool($output)) {
+if ($output->num_rows > 0) {
     $result = $output->fetch_assoc();
     echo "<div>";
     if ($result['profile_status'] == 0) {
-        echo "<a href=\"?page=User\">";
-        echo "<img src='Uploads/user_profiles/profile" . $token_id . ".jpg'>";
+        echo '<a href="?page=User">';
+        echo '<img src="' . $result['profile_path'] . '".jpg>';
     } else {
         echo "<a href=\"?page=User\">";
         echo "<img src='Uploads/profiledefault.jpg'>";
@@ -28,7 +28,7 @@ if (isset($_POST['save'])) {
                     $file_new_name = "profile" . $token_id . ".jpg";
                     $file_destination = "Uploads/user_profiles/$file_new_name";
                     move_uploaded_file($file_array['file_tmp_name'], $file_destination);
-                    $image_query = "update user_details set profile_status=0 where token_id='$token_id'";
+                    $image_query = "update user_details set profile_status=0,profile_path='$file_destination' where token_id='$token_id'";
                     $image_query_output = $conn->query($image_query);
                     header("location:email.php?page=User");
                 } else {

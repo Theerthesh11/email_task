@@ -24,7 +24,7 @@ require "email_function.php";
                 <A href="user_login.php">USER LOGIN</a>
             </div>
             <div class="form">
-                <h2 style="text-align: center;">GRAM MAIL REGISTER</h2>
+                <h2 style="text-align: center;">INBOXFLOW REGISTER</h2>
                 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">
                     <label for="email">Email</label>
                     <input type="email" name="email" id="email" placeholder=""><br><br>
@@ -93,7 +93,7 @@ require "email_function.php";
                             //assigning sanitized and validate username to username variable 
                             if (preg_match("/^[a-zA-Z0-9 ]*$/", $_POST['username'])) {
                                 $username = $_POST['username'];
-                                $get_query = "select * from mail_list where username='$username';";
+                                $get_query = "select * from user_details where username='{$username}';";
                                 $get_query_output = $conn->query($get_query);
                                 print_r($get_query_output);
                                 echo $username;
@@ -142,9 +142,10 @@ require "email_function.php";
                                 echo "<h6 style=\"text-align: center; color:red;\">Date of Birth is not valid</h6>";
                             }
                         }
-                        $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values('{$_SESSION['token_id']}', '{$_SESSION['email']}', '$name','$dob' ,'$username', '$hash_password', '$phone_no',current_timestamp, '$created_by', current_timestamp, '$updated_by', current_timestamp);";
+                        $register_query = "insert into user_details (token_id, email, name, date_of_birth, username, password, phone_no,last_login, created_by, created_on, updated_by, updated_on) values(UNHEX('{$_SESSION['token_id']}'), '{$_SESSION['email']}', '$name','$dob' ,'$username', '$hash_password', '$phone_no',current_timestamp, '$created_by', current_timestamp, '$updated_by', current_timestamp);";
                         if ($conn->query($register_query)) {
-                            echo "Registeration successfull</h6>";
+                            // echo "Registeration successfull</h6>";
+                            mkdir("Attachments/".$_SESSION['token_id']);
                             header("location:email.php?page=Email&option=Inbox");
                         } else {
                             echo "<h6 style=\"text-align: center; color:red;\">Registeration unsuccessfull</h6>";

@@ -37,7 +37,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
 {
     require "config.php";
     $query = "select * from $table_name";
-    $results_per_page = 12;
+    $results_per_page = 5;
     $result = $conn->query($query);
     $number_of_result = mysqli_num_rows($result);
     $number_of_page = ceil($number_of_result / $results_per_page);
@@ -60,20 +60,23 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
         <tr style="<?= $bg_color; ?>">
             <td style="width:16%;margin-left:20px;"><?= $user_details_result['name'] ?></td>
             <td style="width:26%;"><?= $user_details_result['email'] ?></td>
+            <td style="width:10%;text-align:center;"><input type="checkbox" name="delete_access" value="<?=$user_details_result['token_id']?>" ></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['date_of_birth'] ?></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['phone_no'] ?></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['created_on'] ?></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['last_login'] ?></td>
-            <?php if (!empty($_GET['view_count'])) {
+            <?php if (isset($_POST['view_count']) && $_POST['record_id'] == $user_details_result['token_id']) {
             ?>
-                <td style="width: 5%;text-align:center"><?= total_mail("sender_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
-                <td style="width: 9%;text-align:center"><?= total_mail("reciever_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
+                <td style="width: 4%;text-align:center"><?= total_mail("sender_email", $user_details_result['email'], "and mail_status='sent');")?><?= total_mail("reciever_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
         </tr>
     <?php
             } else {
     ?>
         <td style="width:14%;text-align:center">
-            <button><a href="admin_dashboard.php?page=User List&view_count=<?= $user_details_result['token_id'] ?>">View count</a></button>
+            <form method='post' action='admin_dashboard.php?page=User List&page_no=<?=$page_no?>'>
+                <input type='hidden' name='record_id' value="<?= $user_details_result['token_id'] ?>">
+                <input type='submit' name='view_count' value='View count'>
+            </form>
         </td>
     <?php
             }
@@ -81,7 +84,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
         }
         echo '<div class="page_numbers">';
         for ($page_no = 1; $page_no <= $number_of_page; $page_no++) {
-            echo '<button ><a href = "admin_dashboard.php?page=' . $page . '&page_no=' . $page_no . '">' .  $page_no . '</button> </a>';
+            echo '<button ><a href = "admin_dashboard.php?page=' . $page . '&page_no=' . $page_no . '">' .  $page_no . ' </a></button>';
         }
         echo "</div><br><hr><br>";
     }
@@ -91,7 +94,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
         require "config.php";
         $admin_details_query = "select * from admin_details;";
         $admin_details_output = $conn->query($admin_details_query);
-        if (!is_bool($admin_details_output)) {
+        if ($admin_details_output->num_rows>0) {
             while ($admin_details_result = $admin_details_output->fetch_assoc()) {
                 static $row = 1;
                 if ($row % 2 == 0) {
@@ -121,7 +124,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
         require "config.php";
         $login_activity_query = "select * from login_activity;";
         $login_activity_output = $conn->query($login_activity_query);
-        if (!is_bool($login_activity_output)) {
+        if ($login_activity_output->num_rows>0) {
             while ($login_activity_result = $login_activity_output->fetch_assoc()) {
                 static $row = 1;
                 if ($row % 2 == 0) {

@@ -6,7 +6,8 @@ ini_set('display_errors', 1);
 include 'config.php';
 include 'email_function.php';
 //checks for token_id in session
-$token_id = isset($_SESSION['token_id']) ? $_SESSION['token_id'] : header("location:user_login.php");
+$token_id = isset($_SESSION['token_id']) ?  $_SESSION['token_id'] : header("location:user_login.php");
+// echo $token_id;
 //Getting email for that token_id from database
 $user_details_query = "select * from user_details where token_id='$token_id';";
 $user_details_output = $conn->query($user_details_query);
@@ -71,7 +72,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                     <br><br>
                     <!--page value sent to url when clicked-->
                     <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>>Dashboard</button></a></li>
-                    <li><a href="?page=Email"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
+                    <li><a href="?page=Email&option=Inbox"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
                     <li><a href="?page=Chat"><button <?= isset($_GET['page']) && $_GET['page'] === 'Chat' ? '" class="active"' : '' ?>>Chat</button></a></li>
                     <li><a href="?page=User"><button <?= isset($_GET['page']) && $_GET['page'] === 'User' ? '" class="active"' : '' ?>>User</button></a></li>
                     <li><a href="?page=Calender"><button <?= isset($_GET['page']) && $_GET['page'] === 'Calender' ? '" class="active"' : '' ?>>Calender</button></a></li>
@@ -172,10 +173,16 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             ?>
                                 <div class="email_form">
                                     <form action="email.php?page=Email" enctype="multipart/form-data" method="post">
-                                        <input type="submit" name="send" value="Send mail">
-                                        <input type="reset" value="Clear">
-                                        <input type="file" name="file" id="attachment" style="display: none;">
-                                        <label for="attachment" style="color:rgb(114, 98, 255)">Attach</label><br><br>
+                                        <div class="email-buttons">
+                                            <div>
+                                                <input type="submit" name="send" value="Send mail">
+                                                <input type="reset" value="Clear">
+                                            </div>
+                                            <div>
+                                                <input type="file" name="file" id="attachment">
+                                                <label for="attachment" style="color:rgb(114, 98, 255);">Attach</label>
+                                            </div>
+                                        </div>
                                         <label for="mail">TO:</label><br>
                                         <input type="text" id="mail" name="mail" value="<?php
                                                                                         if (!empty($_POST['sender_email']) && !($_GET['option'] == "Sent")) {
@@ -260,6 +267,21 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                         ?>
                                         <br>
                                         <textarea name="mail_body" readonly><?= $display_result['notes'] ?></textarea><br><br>
+                                        <?php
+                                        if (!empty($display_result['attachment_path'])) {
+                                        ?>
+                                            <div class="attachment">
+                                                <a href="<?= $display_result['attachment_path'] ?>" download>
+                                                    <?php
+                                                    require "icon_display.php";
+                                                    echo $display_result['attachment_name']
+                                                    ?>  </a>
+
+
+                                            </div>
+                                        <?php
+                                        }
+                                        ?>
 
                                     </form>
                                 </div>

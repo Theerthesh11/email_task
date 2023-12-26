@@ -597,7 +597,7 @@ input[type="password" i] {
     outline: none;
     border: solid;
     border-width: 1px;
-    border-color: rgb(114, 98, 255)9;
+    border-color: rgb(114, 98, 255);
     border-radius: 3px;
     cursor: pointer;
 }
@@ -650,9 +650,18 @@ input[type="password" i] {
     color: white
 }
 
-.page_numbers {
-    margin: 0px 20px;
-    width: 75%;
+.page_numbers button {
+    margin: 0px 10px 0px 0px;
+    width: 25px;
+    height: 25px;
+    background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 61%, hsla(246, 100%, 83%, 1) 100%);
+    border: none;
+    border-radius: 3px;
+}
+
+.page_numbers a {
+    color: white;
+    padding: 5px 7px;
 }
 
 .icon {
@@ -714,4 +723,36 @@ input[type="password" i] {
 
 .access-table tr:nth-child(odd) {
     background-color: rgb(235, 233, 255);
+}
+
+.email-buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.email-buttons input[type="file" i] {
+    margin: 10px;
+    text-align: center;
+    display: none;
+}
+
+.attachment a {
+    background-color: rgb(227, 227, 227);
+    color: black;
+    padding: 20px;
+    border: none;
+    border-radius: 0px 0px 10px 0px;
+}
+
+.attachment img {
+    width: 30px;
+    height: 30px;
+    margin: -10px 10px -10px -5px;
+}
+
+.attachment-logo {
+    width: 20px;
+    height: 20px;
+    margin: -10px 5px -5px -5px;
 }

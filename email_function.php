@@ -173,7 +173,7 @@ function pagination($page, $query, $result, $page_number)
         $page_no = $_GET['page_no'];
     }
     $page_first_result = ($page_no - 1) * $results_per_page;
-    $pagination_query =  "$query LIMIT " . $page_first_result . ',' . $results_per_page;
+    $pagination_query =  "$query ORDER BY date_of_sending DESC LIMIT " . $page_first_result . ',' . $results_per_page;
     $pagination_output = $conn->query($pagination_query);
     if ($pagination_output->num_rows > 0) {
         while ($pagination_result = $pagination_output->fetch_assoc()) {
@@ -206,7 +206,11 @@ function pagination($page, $query, $result, $page_number)
                 </td>
                 <td style="width:50%;">
                     <a href="email.php?page=Email&option=<?= $page ?>&page_no=<?= $page_number ?>&token=<?= urlencode(base64_encode($pagination_result['token_id'])) ?>&mailno=<?= $pagination_result['mail_no'] ?>" style="<?= $color ?>">
-                        <?= $pagination_result['subject'] ?>
+                        <?php
+                        if(!empty($pagination_result['attachment_name'])){
+                            echo '<img src="icons/attachment.png" alt="clip" class="attachment-logo">';
+                        } 
+                        echo $pagination_result['subject']; ?>
                     </a>
                 </td>
 
