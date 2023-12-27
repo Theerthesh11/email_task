@@ -148,7 +148,7 @@
 .mail-list {
     margin: 20px 20px 20px 10px;
     background-color: white;
-    width: 88%;
+    width: 91%;
 }
 
 .mail-list-options {
@@ -176,7 +176,7 @@
 }
 
 .mail-list-options input[type="search" i] {
-    width: 250px;
+    width: 150px;
     height: 30px;
     border-radius: 3px;
     border-width: 1px;
@@ -248,6 +248,19 @@ input[type="reset" i]:hover {
     outline: none;
     border-color: grey;
 }
+
+.cc_bcc button {
+    background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 41%, hsla(246, 100%, 83%, 1) 100%);
+    border: none;
+    width: 90px;
+    height: 30px;
+    border-radius: 3px;
+}
+
+.cc_bcc button a {
+    color:white;
+}
+
 
 textarea {
     resize: none;
@@ -651,7 +664,7 @@ input[type="password" i] {
 }
 
 .page_numbers button {
-    margin: 0px 10px 0px 0px;
+    margin: 0px 0px 0px 20px;
     width: 25px;
     height: 25px;
     background: linear-gradient(90deg, hsla(246, 100%, 73%, 1) 61%, hsla(246, 100%, 83%, 1) 100%);
@@ -735,6 +748,17 @@ input[type="password" i] {
     margin: 10px;
     text-align: center;
     display: none;
+}
+.email-buttons label{
+    background-color: white;
+    border-style: solid;
+    padding: 6px 20px;
+    border-color:rgb(114, 98, 255) ;
+    border-width: 1.5px;
+    color: rgb(114, 98, 255);
+    border-radius: 3px;
+    cursor: pointer;
+    /* margin: 10px; */
 }
 
 .attachment a {

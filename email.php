@@ -1,4 +1,5 @@
 <?php
+//error reporting
 session_start();
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
@@ -29,6 +30,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inboxflow</title>
     <link rel="stylesheet" href="email.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <body>
@@ -71,11 +73,11 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                     <!--pages in vertical navigation bar -->
                     <br><br>
                     <!--page value sent to url when clicked-->
-                    <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>>Dashboard</button></a></li>
-                    <li><a href="?page=Email&option=Inbox"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>>Email</button></a></li>
-                    <li><a href="?page=Chat"><button <?= isset($_GET['page']) && $_GET['page'] === 'Chat' ? '" class="active"' : '' ?>>Chat</button></a></li>
-                    <li><a href="?page=User"><button <?= isset($_GET['page']) && $_GET['page'] === 'User' ? '" class="active"' : '' ?>>User</button></a></li>
-                    <li><a href="?page=Calender"><button <?= isset($_GET['page']) && $_GET['page'] === 'Calender' ? '" class="active"' : '' ?>>Calender</button></a></li>
+                    <li><a href="?page=Dashboard"><button <?= isset($_GET['page']) && $_GET['page'] === 'Dashboard' ? '" class="active"' : '' ?>><i class="fa fa-bolt"></i> Dashboard</button></a></li>
+                    <li><a href="?page=Email&option=Inbox"><button <?= isset($_GET['page']) && $_GET['page'] === 'Email' ? '" class="active"' : '' ?>><i class="fa fa-envelope-open-o" aria-hidden="true"></i> Email</button></a></li>
+                    <li><a href="?page=Chat"><button <?= isset($_GET['page']) && $_GET['page'] === 'Chat' ? '" class="active"' : '' ?>><i class="fa fa-chat"></i>Chat</button></a></li>
+                    <li><a href="?page=User"><button <?= isset($_GET['page']) && $_GET['page'] === 'User' ? '" class="active"' : '' ?>><i class="fa fa-user"></i> User</button></a></li>
+                    <li><a href="?page=Calender"><button <?= isset($_GET['page']) && $_GET['page'] === 'Calender' ? '" class="active"' : '' ?>><i class="fa fa-calendar"></i> Calender</button></a></li>
                 </ul>
             </div>
             <?php
@@ -125,39 +127,47 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             <!--options in email page-->
                             <!--option page is open -->
                             <div class="compose-btn">
-                                <a href="email.php?page=Email&option=Compose"><button>Compose</button></a>
+                                <a href="email.php?page=Email&option=Compose"><button><i class="fa fa-pencil"></i> Compose</button></a>
                             </div>
                             <div class="email-options">
+                                <!--inbox option and unread count-->
                                 <div>
-                                    <a href="email.php?page=Email&option=Inbox"><button <?= isset($_GET['option']) && $_GET['option'] === 'Inbox' ? 'class="option_active"' : '' ?>><i class="bi bi-inboxes"></i>Inbox</button></a>
+                                    <a href="email.php?page=Email&option=Inbox"><button <?= isset($_GET['option']) && $_GET['option'] === 'Inbox' ? 'class="option_active"' : '' ?>><i class="fa fa-inbox"></i> Inbox</button></a>
                                 </div>
                                 <div class="email-count">
                                     <?= total_mail("reciever_email", "and mail_status='sent') and (archived='no' and inbox_status='unread');") ?>
                                 </div>
-                                <div><a href="email.php?page=Email&option=Unread"><button <?= isset($_GET['option']) && $_GET['option'] === 'Unread' ? 'class="option_active"' : '' ?>>Unread</button></a></div>
+                                <!--unread option and count-->
+                                <div><a href="email.php?page=Email&option=Unread"><button <?= isset($_GET['option']) && $_GET['option'] === 'Unread' ? 'class="option_active"' : '' ?>><i class="fa fa-unread"></i> Unread</button></a></div>
                                 <div class="email-count">
                                     <?= total_mail("reciever_email", " and inbox_status='unread') and mail_status='sent'") ?>
                                 </div>
-                                <div><a href="email.php?page=Email&option=Sent"><button <?= isset($_GET['option']) && $_GET['option'] === 'Sent' ? 'class="option_active"' : '' ?>>Sent</button></a></div>
+                                <!--sent option-->
+                                <div><a href="email.php?page=Email&option=Sent"><button <?= isset($_GET['option']) && $_GET['option'] === 'Sent' ? 'class="option_active"' : '' ?>><i class="fa fa-sent"></i> Sent</button></a></div>
                                 <div class="email-count">
                                 </div>
-                                <div><a href="email.php?page=Email&option=Draft"><button <?= isset($_GET['option']) && $_GET['option'] === 'Draft' ? 'class="option_active"' : '' ?>>Draft</button></a></div>
+                                <!--draft option and its count-->
+                                <div><a href="email.php?page=Email&option=Draft"><button <?= isset($_GET['option']) && $_GET['option'] === 'Draft' ? 'class="option_active"' : '' ?>><i class="fa fa-draft"></i> Draft</button></a></div>
                                 <div class="email-count">
                                     <?= total_mail("sender_email", "and mail_status='draft')") ?>
                                 </div>
-                                <div><a href="email.php?page=Email&option=Starred"><button <?= isset($_GET['option']) && $_GET['option'] === 'Starred' ? 'class="option_active"' : '' ?>>Starred</button></a></div>
+                                <!--starred option and its unread count-->
+                                <div><a href="email.php?page=Email&option=Starred"><button <?= isset($_GET['option']) && $_GET['option'] === 'Starred' ? 'class="option_active"' : '' ?>><i class="fa fa-star"></i> Starred</button></a></div>
                                 <div class="email-count">
                                     <?= total_mail("sender_email", "or reciever_email='{$email}') and (starred='yes' and mail_status='sent') and inbox_status='unread';") ?>
                                 </div>
-                                <div><a href="email.php?page=Email&option=Spam"><button <?= isset($_GET['option']) && $_GET['option'] === 'Spam' ? 'class="option_active"' : '' ?>>Spam</button></a></div>
+                                <!--spam option and its count-->
+                                <div><a href="email.php?page=Email&option=Spam"><button <?= isset($_GET['option']) && $_GET['option'] === 'Spam' ? 'class="option_active"' : '' ?>><i class="fa fa-spam"></i> Spam</button></a></div>
                                 <div class="email-count">
                                     <?= total_mail("reciever_email", "and mail_status='sent') and (spam='yes');") ?>
                                 </div>
-                                <div><a href="email.php?page=Email&option=Archived"><button <?= isset($_GET['option']) && $_GET['option'] === 'Archived' ? 'class="option_active"' : '' ?>>Archive</button></a></div>
+                                <!--archived option and its unread count-->
+                                <div><a href="email.php?page=Email&option=Archived"><button <?= isset($_GET['option']) && $_GET['option'] === 'Archived' ? 'class="option_active"' : '' ?>><i class="fa fa-archive"></i> Archive</button></a></div>
                                 <div class="email-count">
                                     <?= total_mail("sender_email", "or reciever_email='{$email}') and (mail_status='sent' and archived='yes') and inbox_status='unread';") ?>
                                 </div>
-                                <div><a href="email.php?page=Email&option=Trash"><button <?= isset($_GET['option']) && $_GET['option'] === 'Trash' ? 'class="option_active"' : '' ?>>Trash</button></a></div>
+                                <!--trash option and its unread count-->
+                                <div><a href="email.php?page=Email&option=Trash"><button <?= isset($_GET['option']) && $_GET['option'] === 'Trash' ? 'class="option_active"' : '' ?>><i class="fa fa-trash"></i> Trash</button></a></div>
                                 <div class="email-count">
                                     <?= trash_mail("mail_no", "reciever_email", "sender_email", "(mail_status='trash' and inbox_status='unread');") ?>
                                 </div>
@@ -169,6 +179,8 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                         ?>
                         <div class="mail-list">
                             <?php
+                            //compose option content
+                            //reply button also navigates here
                             if (isset($_GET['option']) && $_GET['option'] == "Compose" || isset($_POST['reply'])) {
                             ?>
                                 <div class="email_form">
@@ -180,11 +192,14 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                             </div>
                                             <div>
                                                 <input type="file" name="file" id="attachment">
-                                                <label for="attachment" style="color:rgb(114, 98, 255);">Attach</label>
+                                                <div style="margin:12px">
+                                                    <label for="attachment" style="color:rgb(114, 98, 255);">Attach</label>
+                                                </div>
                                             </div>
                                         </div>
                                         <label for="mail">TO:</label><br>
                                         <input type="text" id="mail" name="mail" value="<?php
+                                                                                        //reply brings the appropriate reply mail to this text box
                                                                                         if (!empty($_POST['sender_email']) && !($_GET['option'] == "Sent")) {
                                                                                             $text_box_value = $_POST['sender_email'];
                                                                                         } elseif (empty($_POST['reciever_email'])) {
@@ -203,10 +218,9 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                         <textarea name="notes" placeholder="Type here..."></textarea><br><br>
                                     </form>
                                 </div>
-                                <!-- <div class="mail-list-table"> -->
                             <?php
                             } else {
-                            ?>
+                            ?><!--mail-list-options for other options in email page except compose-->
                                 <div class="mail-list-options">
                                     <div>
                                         <form action="email.php?page=Email&option=<?= $option ?>&page_no=<?= $page_no ?>" method="post">
@@ -223,12 +237,15 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                 </div>
                             <?php
                             }
-                            include "email_options.php";
+                            //email_options.php contains the data to be displayed when each options is clicked
+                            require_once "email_options.php";
                             ?>
                             <?php
-                            include 'config.php';
+                            require_once 'config.php';
+                            //gets the encoded token from url and stres it after decoding
                             $token_id = isset($_GET['token']) ? base64_decode(urldecode($_GET['token'])) : "";
-                            $mail_no = isset($_GET['mailno']) ? $_GET['mailno'] : "";
+                            $mail_no = isset($_GET['mailno']) ? $_GET['mailno'] : "";//stores mail number
+                            //The below part makes the mail read when opened
                             if (!empty($token_id) && !empty($mail_no)) {
                                 $select_query = "select * from mail_list where mail_no ='$mail_no' and token_id='$token_id';";
                                 $mark_as_read = "update mail_list set inbox_status=\"read\" where mail_no='{$mail_no}' and token_id='{$token_id}'";
@@ -237,6 +254,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                 $display_result = $select_query_output->fetch_assoc();
                             ?>
                                 <div class="mail-display">
+                                    <!--form that shows the mail sent or recieved briefly with readonly mode-->
                                     <form action="email.php?page=Email&option=Compose" method="post">
                                         <div class="mail-display-options">
                                             <div>
@@ -247,14 +265,15 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                                 <input type="submit" name="forward" value="Forward"><br>
                                             </div>
                                         </div>
-                                        <label>From:</label>
+                                        <label>From:</label><br>
                                         <input type="text" name="sender_email" id="sender_email" value="<?= $display_result['sender_email'] ?>" readonly>
                                         <br><br>
-                                        <label>To:</label>
+                                        <label>To:</label><br>
                                         <input type="text" name="reciever_email" id="reciever_email" value="<?= $display_result['reciever_email'] ?>" readonly><br><br>
-                                        <label>Subject:</label>
+                                        <label>Subject:</label><br>
                                         <input type="text" name="mail_subject" id="subject" value="<?= $display_result['subject'] ?>" readonly><br><br>
                                         <?php
+                                        //displays cc and bcc of a mail only if exist
                                         if (empty($display_result['cc']) && empty($display_result['bcc'])) {
                                         } else {
                                         ?>
@@ -268,16 +287,16 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                                         <br>
                                         <textarea name="mail_body" readonly><?= $display_result['notes'] ?></textarea><br><br>
                                         <?php
+                                        //displays the attachment if there is and attachment path in db
                                         if (!empty($display_result['attachment_path'])) {
                                         ?>
                                             <div class="attachment">
                                                 <a href="<?= $display_result['attachment_path'] ?>" download>
                                                     <?php
+                                                    //icons to differentiate different format of files
                                                     require "icon_display.php";
                                                     echo $display_result['attachment_name']
-                                                    ?>  </a>
-
-
+                                                    ?> </a>
                                             </div>
                                         <?php
                                         }
@@ -292,6 +311,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             }
                             break;
                         case 'Chat':
+                            //chat page
                     ?>
                     <div class="chat-container">
                         <div class="chat-content">
@@ -304,6 +324,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             break;
 
                         case 'User':
+                            //user profile page
                             require 'email_options.php';
                 ?>
                     <div class="profile-container">
@@ -311,10 +332,11 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             <div>
                                 <h3>Profile</h3>
                             </div>
+                            <!--profile picture display-->
                             <?php require "profile_picture.php" ?>
                         </div>
                         <?php
-
+                        //displays the details in readonly before clicking edit button
                             if (!isset($_POST['edit'])) {
                         ?>
                             <div class="user_details">
@@ -335,13 +357,13 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             </div>
                         <?php
                             }
+                            //displays the value to be edited after edit is clicked
                             if (isset($_POST['edit'])) {
                         ?>
                             <div class="user_details">
                                 <form action="email.php?page=User" enctype="multipart/form-data" method="post">
                                     <input type="file" name="file" id="fileInput" style="display: none;">
-                                    <label for="fileInput" style="color:rgb(114, 98, 255)">Update profile
-                                        picture</label>
+                                    <label for="fileInput" style="color:rgb(114, 98, 255)">Update profile picture</label>
                                     <input type="submit" name="save" value="Save"><br><br>
                                     <label for="username">Username</label>
                                     <input type="text" id="username" name="user_name" value="<?= $user_details_result['username'] ?>" readonly><br><br>
@@ -360,6 +382,7 @@ $page_no = empty($_GET['page_no']) ? '1' : $_GET['page_no'];
                             }
                             break;
                         case 'Calender':
+                            //calender page
                 ?>
                 <div class="dashboard-container">
                     <div class="dashboard-content">

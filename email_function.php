@@ -1,29 +1,34 @@
 <?php
+//random function generates according to given length
 function random($length)
 {
     $result = substr(str_shuffle('1234567890ABCDEF'), 0, $length);
     return $result;
 }
+//returns a char from this to fit in token_id
 function random_byte()
 {
     return substr(str_shuffle('89AB'), 0, 1);
 }
-
+//creates user name for non-registered user
 function recipient_name($to_mail)
 {
     require 'config.php';
+    //fetching username from db if user exist
     $fetch_name_query = "select name from user_details where email='$to_mail';";
     $fetch_name_output = $conn->query($fetch_name_query);
     if ($fetch_name_output->num_rows > 0) {
         $fetch_name_result = $fetch_name_output->fetch_assoc();
         return $fetch_name_result['name'];
     } else {
+        //creating username using mail_id
         $name_find = strpos($to_mail, "@");
         $find_string = substr($to_mail, 0, $name_find);
-        $reciever_name = preg_replace('/[0-9]+/', '', $find_string);
+        $reciever_name = preg_replace('/[0-9]+/', '', $find_string);//replacing numbers in username
         return ucfirst($reciever_name);
     }
 }
+//total_mail function counts the total mails
 function total_mail($column_name, $addition = " ")
 {
     global $email;
@@ -42,7 +47,7 @@ function total_mail($column_name, $addition = " ")
         return;
     }
 }
-
+//trash_mail function counts the total mails in trash
 function trash_mail($column, $column_name, $column_name2, $addition = " ")
 {
     global $email;
@@ -61,7 +66,7 @@ function trash_mail($column, $column_name, $column_name2, $addition = " ")
         return;
     }
 }
-
+//name_setting sets name for star,archive,trash according to current option in email 
 function name_setting($button_name, $value1, $value2)
 {
     if (!empty($_GET['option'])) {
@@ -79,6 +84,7 @@ function name_setting($button_name, $value1, $value2)
     }
 }
 
+//converts numeric date from database to alpha numeric format
 function dateconvertion($numericdate)
 {
     $dateString = $numericdate;
@@ -86,6 +92,7 @@ function dateconvertion($numericdate)
     $formattedDate = $date->format("d M ");
     return $formattedDate;
 }
+//function that decides row color for odd rows
 function row_color($i_status)
 {
     global $bg_color, $color;
@@ -103,6 +110,7 @@ function row_color($i_status)
         $color = "color:black;";
     }
 }
+//displays the user as me in their application whereever their email appears
 function usermail_as_me($sender_mail, $reciever_mail, $sender_username, $reciever_username)
 {
     global $email;
@@ -114,52 +122,61 @@ function usermail_as_me($sender_mail, $reciever_mail, $sender_username, $recieve
     }
 }
 
-
+//this function does the updation in db according to each button
 function email_options($starred_mail, $checkbox_value)
 {
     require "config.php";
+    //stars a mail
     if (isset($_POST['star'])) {
         foreach ($starred_mail as $mail_number) {
             $star_query = "update mail_list set starred='yes' where mail_no='$mail_number';";
             $star_output = $conn->query($star_query);
         }
-    } elseif (isset($_POST['archive'])) {
+    }//archives a mail
+     elseif (isset($_POST['archive'])) {
         foreach ($checkbox_value as $mail_number) {
             $archive_query = "update mail_list set archived='yes' where mail_no='$mail_number';";
             $archive_output = $conn->query($archive_query);
         }
-    } elseif (isset($_POST['trash'])) {
+    }//moves a mail to trash
+    elseif (isset($_POST['trash'])) {
         foreach ($checkbox_value as $mail_number) {
             $trash_query = "update mail_list set mail_status='trash' where mail_no='$mail_number';";
             $trash_output = $conn->query($trash_query);
         }
-    } elseif (isset($_POST['mark_as_read'])) {
+    }//marks mail as read when in unread
+    elseif (isset($_POST['mark_as_read'])) {
         foreach ($checkbox_value as $mail_number) {
             $mark_as_read_query = "update mail_list set inbox_status='read' where mail_no='$mail_number';";
             $mark_as_read_output = $conn->query($mark_as_read_query);
         }
-    } elseif (isset($_POST['unarchive'])) {
+    }//unarchives a mail
+    elseif (isset($_POST['unarchive'])) {
         foreach ($checkbox_value as $mail_number) {
             $unarchive_query = "update mail_list set archived='no' where mail_no='$mail_number';";
             $unarchive_query_output = $conn->query($unarchive_query);
         }
-    } elseif (isset($_POST['unstar'])) {
+    }//unstars a mail
+    elseif (isset($_POST['unstar'])) {
         foreach ($starred_mail as $mail_number) {
             $unstar_query = "update mail_list set starred='no' where mail_no='$mail_number';";
             $unstar_output = $conn->query($unstar_query);
         }
-    } elseif (isset($_POST['restore'])) {
+    }//restores a mail from trash
+    elseif (isset($_POST['restore'])) {
         foreach ($checkbox_value as $mail_number) {
             $restore_query = "update mail_list set mail_status='sent' where mail_no='$mail_number'";
             $restore_output = $conn->query($restore_query);
         }
-    } elseif (isset($_POST['delete'])) {
+    }//deletes a mail from trash
+    elseif (isset($_POST['delete'])) {
         foreach ($checkbox_value as $mail_number) {
             $delete_query = "update mail_list set mail_status='delete' where mail_no='$mail_number'";
             $delete_output = $conn->query($delete_query);
         }
     }
 }
+//This function displays the data fetched for each options
 function pagination($page, $query, $result, $page_number)
 {
     global $email;
@@ -223,6 +240,7 @@ function pagination($page, $query, $result, $page_number)
 <?php
         }
     }
+    //page numbers for records when records count exceed 10
     echo '<div class="result-page-numbers"><div class="page_numbers">';
     for ($page_no = 1; $page_no <= $number_of_page; $page_no++) {
         echo '<button><a href = "email.php?page=Email&option=' . $page . '&page_no=' . $page_no . '"> ' .  $page_no . ' </a></button>';

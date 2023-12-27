@@ -59,7 +59,7 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
 ?>
         <tr style="<?= $bg_color; ?>">
             <td style="width:16%;margin-left:20px;"><?= $user_details_result['name'] ?></td>
-            <td style="width:26%;"><?= $user_details_result['email'] ?></td>
+            <td style="width:20%;"><?= $user_details_result['email'] ?></td>
             <td style="width:10%;text-align:center;"><input type="checkbox" name="delete_access" value="<?=$user_details_result['token_id']?>" ></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['date_of_birth'] ?></td>
             <td style="width:11%;text-align:center"><?= $user_details_result['phone_no'] ?></td>
@@ -67,12 +67,13 @@ function pagination_admin_activity($table_name, $page, $query = "select * from u
             <td style="width:11%;text-align:center"><?= $user_details_result['last_login'] ?></td>
             <?php if (isset($_POST['view_count']) && $_POST['record_id'] == $user_details_result['token_id']) {
             ?>
-                <td style="width: 4%;text-align:center"><?= total_mail("sender_email", $user_details_result['email'], "and mail_status='sent');")?><?= total_mail("reciever_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
+                <td style="width: 5%;text-align:center"><?= total_mail("sender_email", $user_details_result['email'], "and mail_status='sent');")?></td>
+                <td style="width: 5%;text-align:center"><?= total_mail("reciever_email", $user_details_result['email'], "and mail_status='sent');") ?></td>
         </tr>
     <?php
             } else {
     ?>
-        <td style="width:14%;text-align:center">
+        <td style="width:8%;text-align:center">
             <form method='post' action='admin_dashboard.php?page=User List&page_no=<?=$page_no?>'>
                 <input type='hidden' name='record_id' value="<?= $user_details_result['token_id'] ?>">
                 <input type='submit' name='view_count' value='View count'>

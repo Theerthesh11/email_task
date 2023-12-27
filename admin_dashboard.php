@@ -212,13 +212,13 @@ if ($admin_details_output->num_rows > 0) {
                                 <th>JOINED</th>
                                 <th>LAST LOGIN</th>
                                 <?php
-                                if (!empty($_GET['view_count'])) {
+                                if (!empty($_POST['view_count'])) {
                                 ?>
                                     <th>SENT</th>
                                     <th>RECIEVED</th>
                                 <?php
                                 } else {
-                                ?><th>Sent/Recieved</th>
+                                ?><th>SENT/RECIEVED</th>
                             </tr>
                         <?php
                                 }
